@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IFS Finance — Project Workflow</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; }
+
+    header {
+      background: #4361ee; color: white;
+      padding: 20px 32px; display: flex; align-items: center; gap: 16px;
+    }
+    header h1 { font-size: 20px; font-weight: 700; }
+    header p  { font-size: 13px; opacity: .8; margin-top: 2px; }
+
+    .tabs {
+      display: flex; gap: 6px; padding: 16px 32px 0;
+      border-bottom: 2px solid #e2e8f0; background: white; flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 8px 16px; border-radius: 8px 8px 0 0; border: none;
+      background: transparent; cursor: pointer; font-size: 13px; font-weight: 600;
+      color: #64748b; transition: all .15s; border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+    }
+    .tab-btn.active { color: #4361ee; border-bottom-color: #4361ee; background: #eef2ff; }
+    .tab-btn:hover:not(.active) { color: #4361ee; background: #f1f5f9; }
+
+    .content { padding: 24px 32px; max-width: 1200px; margin: 0 auto; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .sec-header {
+      font-size: 14px; font-weight: 700; color: #1e293b;
+      padding: 10px 14px; background: white; border-radius: 8px;
+      margin-bottom: 12px; border-left: 4px solid #4361ee;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+
+    /* ── OVERVIEW ── */
+    .overview-wrap { display: flex; flex-direction: column; gap: 16px; }
+    .layer-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #94a3b8; margin-bottom: 8px; }
+    .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .node { border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 600; text-align: center; min-width: 110px; border: 1.5px solid transparent; }
+    .node.auth     { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+    .node.gec      { background: #ede9fe; border-color: #7c3aed; color: #5b21b6; }
+    .node.lender   { background: #dbeafe; border-color: #3b82f6; color: #1e40af; }
+    .node.supplier { background: #dcfce7; border-color: #22c55e; color: #166534; }
+    .node.edge     { background: #f1f5f9; border-color: #94a3b8; color: #475569; font-size: 11px; }
+    .node.db       { background: #fce7f3; border-color: #ec4899; color: #9d174d; }
+    .node.storage  { background: #fff7ed; border-color: #f97316; color: #9a3412; }
+    .node.mid      { background: #f0fdf4; border-color: #4ade80; color: #15803d; min-width: 90px; }
+    .arrow { color: #94a3b8; font-size: 16px; flex-shrink: 0; }
+    .role-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .role-col { display: flex; flex-direction: column; gap: 6px; }
+    .role-header { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; padding: 6px 12px; border-radius: 6px; text-align: center; margin-bottom: 4px; }
+    .role-header.gec      { background: #ede9fe; color: #5b21b6; }
+    .role-header.lender   { background: #dbeafe; color: #1e40af; }
+    .role-header.supplier { background: #dcfce7; color: #166534; }
+    .page-box { padding: 7px 10px; border-radius: 6px; font-size: 11px; border: 1px solid #e5e7eb; background: white; color: #374151; display: flex; align-items: center; gap: 6px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .dot.gec      { background: #7c3aed; }
+    .dot.lender   { background: #3b82f6; }
+    .dot.supplier { background: #22c55e; }
+
+    /* ── PAGES ── */
+    .ef-card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 14px; font-size: 11px; }
+    .ef-card .ef-name { font-weight: 700; color: #1e293b; font-size: 12px; margin-bottom: 4px; }
+    .ef-card .ef-desc { color: #64748b; line-height: 1.5; }
+    .ef-role { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 700; margin-top: 5px; }
+    .ef-role.all      { background: #f1f5f9; color: #475569; }
+    .ef-role.gec      { background: #ede9fe; color: #5b21b6; }
+    .ef-role.supplier { background: #dcfce7; color: #166534; }
+    .ef-role.lender   { background: #dbeafe; color: #1e40af; }
+    .ef-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+    /* ── FLOW ── */
+    .flow-section { margin-bottom: 24px; }
+    .flow-steps { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .step { background: white; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: 9px 13px; font-size: 11px; color: #374151; font-weight: 600; min-width: 110px; text-align: center; line-height: 1.5; }
+    .step.highlight { border-color: #4361ee; background: #eef2ff; color: #3730a3; }
+    .step.warn      { border-color: #f59e0b; background: #fef3c7; color: #92400e; }
+    .step.success   { border-color: #22c55e; background: #dcfce7; color: #166534; }
+    .step.danger    { border-color: #ef4444; background: #fee2e2; color: #991b1b; }
+    .step.purple    { border-color: #7c3aed; background: #ede9fe; color: #5b21b6; }
+    .step.orange    { border-color: #f97316; background: #fff7ed; color: #9a3412; }
+    .fa  { font-size: 14px; color: #94a3b8; }
+    .sub-row { margin-top: 10px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .sub-label { font-size: 11px; color: #6b7280; font-weight: 600; }
+    .reg-flow { background: #fafafa; border: 1.5px dashed #d1d5db; border-radius: 10px; padding: 16px 18px; }
+    .reg-note { font-size: 10px; color: #9ca3af; font-style: italic; margin-top: 8px; }
+    .badge-new { display: inline-block; background: #fee2e2; color: #991b1b; font-size: 9px; font-weight: 800; padding: 1px 6px; border-radius: 4px; vertical-align: middle; margin-left: 6px; }
+    .divider { border: none; border-top: 1px solid #f1f5f9; margin: 20px 0; }
+
+    /* ── BACKEND ── */
+    .db-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
+    .db-card { background: white; border: 1.5px solid #fce7f3; border-radius: 8px; padding: 12px 14px; }
+    .db-card .db-name { font-weight: 700; color: #9d174d; font-size: 12px; margin-bottom: 5px; }
+    .db-card .db-cols { color: #6b7280; font-size: 10px; line-height: 1.7; }
+    code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-size: 11px; }
+
+    @media (max-width: 768px) {
+      .role-cols, .ef-grid, .db-grid { grid-template-columns: 1fr; }
+      .content { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>IFS Finance — Project Workflow</h1>
+    <p>Nuxt 3 + Supabase · 3 Roles: GEC · Lender · Supplier</p>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('overview')">🗺️ ภาพรวม</button>
+  <button class="tab-btn" onclick="showTab('pages')">📄 Pages by Role</button>
+  <button class="tab-btn" onclick="showTab('flow')">🔄 User Flows</button>
+  <button class="tab-btn" onclick="showTab('backend')">⚙️ Backend</button>
+</div>
+
+<div class="content">
+
+  <!-- ══ OVERVIEW ══ -->
+  <div id="tab-overview" class="panel active">
+    <div class="overview-wrap">
+
+      <div>
+        <div class="layer-label">🔐 Authentication (Supabase Auth)</div>
+        <div class="row">
+          <div class="node auth">Register<br/><span style="font-size:10px;font-weight:400">/auth/cover-register</span></div>
+          <div class="arrow">→</div>
+          <div class="node" style="background:#fff7ed;border-color:#f97316;color:#9a3412;min-width:110px">Pending<br/><span style="font-size:10px;font-weight:400">/auth/pending</span></div>
+          <div class="arrow">→</div>
+          <div class="node gec" style="min-width:90px">GEC Approves</div>
+          <div class="arrow">→</div>
+          <div class="node auth">Login<br/><span style="font-size:10px;font-weight:400">/auth/cover-login</span></div>
+          <div class="arrow">→</div>
+          <div class="node mid">Middleware<br/><span style="font-size:10px;font-weight:400">auth.global.ts</span></div>
+          <div class="arrow">→</div>
+          <div class="node auth" style="min-width:130px">Role-based Routing</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="layer-label">👤 Roles & Pages</div>
+        <div class="role-cols">
+          <div class="role-col">
+            <div class="role-header gec">GEC (Admin)</div>
+            <div class="page-box"><span class="dot gec"></span>Registration List</div>
+            <div class="page-box"><span class="dot gec"></span>Profile List</div>
+            <div class="page-box"><span class="dot gec"></span>PO List</div>
+            <div class="page-box"><span class="dot gec"></span>Invoice List</div>
+            <div class="page-box"><span class="dot gec"></span>Request List</div>
+            <div class="page-box"><span class="dot gec"></span>View Request (read-only)</div>
+          </div>
+          <div class="role-col">
+            <div class="role-header lender">Lender</div>
+            <div class="page-box"><span class="dot lender"></span>Request List</div>
+            <div class="page-box"><span class="dot lender"></span>View Request</div>
+            <div class="page-box" style="opacity:.5"><span class="dot lender"></span>Approve / Reject</div>
+          </div>
+          <div class="role-col">
+            <div class="role-header supplier">Supplier</div>
+            <div class="page-box"><span class="dot supplier"></span>Request List</div>
+            <div class="page-box"><span class="dot supplier"></span>New Line Application</div>
+            <div class="page-box"><span class="dot supplier"></span>New Factoring Request</div>
+            <div class="page-box"><span class="dot supplier"></span>Edit Request (draft/rejected)</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="layer-label">☁️ Supabase Edge Functions</div>
+        <div class="row">
+          <div class="node edge">listallpo</div>
+          <div class="node edge">listinvoices</div>
+          <div class="node edge">listinvoicessupplier</div>
+          <div class="node edge">listapplication</div>
+          <div class="node edge">createapplications</div>
+          <div class="node edge">updateapplication</div>
+          <div class="node edge">getcreditfacility</div>
+          <div class="node edge">getsignedurl</div>
+        </div>
+      </div>
+
+      <div class="row" style="gap:20px;align-items:flex-start">
+        <div style="flex:1">
+          <div class="layer-label">🗄️ Database (PostgreSQL)</div>
+          <div class="row">
+            <div class="node db">profiles</div>
+            <div class="node db">applications</div>
+            <div class="node db">application_po_items</div>
+            <div class="node db">purchase_orders</div>
+            <div class="node db">invoices</div>
+            <div class="node db">credit_facilities</div>
+          </div>
+        </div>
+        <div>
+          <div class="layer-label">📦 Storage</div>
+          <div class="node storage">Bucket: document<br/><span style="font-size:10px;font-weight:400">private → signed URL</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ PAGES BY ROLE ══ -->
+  <div id="tab-pages" class="panel">
+    <div class="role-cols" style="gap:20px">
+
+      <div>
+        <div class="role-header gec" style="margin-bottom:12px">👑 GEC (Admin)</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="ef-card"><div class="ef-name">/gec/registration-list</div><div class="ef-desc">ดูรายชื่อผู้สมัครลงทะเบียน · อนุมัติ/ปฏิเสธ supplier</div></div>
+          <div class="ef-card"><div class="ef-name">/gec/profile-list</div><div class="ef-desc">จัดการ profile ทั้งหมดในระบบ</div></div>
+          <div class="ef-card"><div class="ef-name">/po_list</div><div class="ef-desc">รายการ Purchase Orders ทั้งหมด · ค้นหา · filter · export CSV</div></div>
+          <div class="ef-card"><div class="ef-name">/invoice_list</div><div class="ef-desc">รายการ Invoices ทั้งหมด · ค้นหา · filter · export CSV</div></div>
+          <div class="ef-card"><div class="ef-name">/gec/request-list</div><div class="ef-desc">รายการ Factoring Requests ทั้งหมด · ดูสถิติ stats · view-only</div></div>
+          <div class="ef-card"><div class="ef-name">/gec/view-request/[id]</div><div class="ef-desc">ดูรายละเอียด request · อ่านอย่างเดียว · ดูไฟล์ด้วย signed URL</div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="role-header lender" style="margin-bottom:12px">🏦 Lender</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="ef-card"><div class="ef-name">/lender/request-list</div><div class="ef-desc">รายการ Factoring Requests · filter by status · search</div></div>
+          <div class="ef-card"><div class="ef-name">/lender/view-request/[id]</div><div class="ef-desc">ดูรายละเอียด · ดูไฟล์ signed URL · Approve / Reject พร้อม modal</div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="role-header supplier" style="margin-bottom:12px">🏭 Supplier</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="ef-card"><div class="ef-name">/auth/cover-register</div><div class="ef-desc">สมัครสมาชิกใหม่ · กรอกข้อมูลบริษัท · สถานะเริ่มต้น = pending</div></div>
+          <div class="ef-card"><div class="ef-name">/auth/pending</div><div class="ef-desc">หน้ารอ GEC อนุมัติ · ยังเข้าหน้าอื่นไม่ได้</div></div>
+          <div class="ef-card"><div class="ef-name">/supplier/request-list</div><div class="ef-desc">รายการ requests ของตนเอง · ดูสถานะ · ไปแก้ไขหากเป็น draft/rejected</div></div>
+          <div class="ef-card"><div class="ef-name">/supplier/new-line-application</div><div class="ef-desc">ยื่นขอวงเงิน Credit Line ใหม่ · upload เอกสาร</div></div>
+          <div class="ef-card"><div class="ef-name">/supplier/new-factoring-request</div><div class="ef-desc">เลือก Invoice → กรอกรายละเอียด → Save Draft / Submit</div></div>
+          <div class="ef-card"><div class="ef-name">/supplier/edit-request/[id]</div><div class="ef-desc">แก้ไข draft หรือ rejected request · เลือก Invoice ใหม่ได้</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ USER FLOWS ══ -->
+  <div id="tab-flow" class="panel">
+
+    <div class="flow-section">
+      <div class="sec-header">📝 Supplier Registration Flow <span class="badge-new">NEW</span></div>
+      <div class="reg-flow">
+        <div class="flow-steps">
+          <div class="step highlight">/auth/cover-register<br/><span style="font-size:10px;color:#6366f1">กรอกข้อมูลบริษัท</span></div>
+          <div class="fa">→</div>
+          <div class="step">Supabase Auth<br/><span style="font-size:10px;color:#64748b">signUp(email, password)</span></div>
+          <div class="fa">→</div>
+          <div class="step">Insert profiles<br/><span style="font-size:10px;color:#64748b">role=supplier, status=pending</span></div>
+          <div class="fa">→</div>
+          <div class="step orange">/auth/pending<br/><span style="font-size:10px">รอ GEC อนุมัติ</span></div>
+        </div>
+        <div class="sub-row">
+          <div class="step purple">GEC<br/><span style="font-size:10px">registration-list</span></div>
+          <div class="fa">→</div>
+          <div class="step success">Approve<br/><span style="font-size:10px">status = active</span></div>
+          <div class="fa">→</div>
+          <div class="step success">/supplier/request-list</div>
+          <div style="color:#94a3b8;font-size:13px;font-weight:600;margin:0 4px">or</div>
+          <div class="step danger">Reject<br/><span style="font-size:10px">status = inactive</span></div>
+        </div>
+        <div class="reg-note">* middleware ตรวจสอบ status === 'pending' → redirect /auth/pending ทุกครั้งที่เข้าหน้าใดก็ตาม</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="flow-section">
+      <div class="sec-header">🔐 Auth & Role Routing</div>
+      <div class="flow-steps">
+        <div class="step">เปิดหน้าใดก็ได้</div>
+        <div class="fa">→</div>
+        <div class="step warn">auth.global.ts<br/><span style="font-size:10px">getSession()</span></div>
+        <div class="fa">→</div>
+        <div class="step">มี session?</div>
+      </div>
+      <div class="sub-row">
+        <span style="font-size:11px;color:#22c55e;font-weight:700">✓ Yes →</span>
+        <div class="step">โหลด profile</div>
+        <div class="fa">→</div>
+        <div class="step orange">pending?</div>
+        <div class="fa">→</div>
+        <div class="step orange">/auth/pending</div>
+      </div>
+      <div class="sub-row">
+        <span style="font-size:11px;color:#22c55e;font-weight:700">active →</span>
+        <div class="step success" style="min-width:70px">supplier</div><div class="fa">→</div><div class="step">/supplier/request-list</div>
+        <span style="color:#cbd5e1;margin:0 2px">|</span>
+        <div class="step success" style="min-width:70px">lender</div><div class="fa">→</div><div class="step">/lender/request-list</div>
+        <span style="color:#cbd5e1;margin:0 2px">|</span>
+        <div class="step success" style="min-width:70px">gec</div><div class="fa">→</div><div class="step">unrestricted</div>
+      </div>
+      <div class="sub-row">
+        <span style="font-size:11px;color:#ef4444;font-weight:700">✗ No session →</span>
+        <div class="step danger">/auth/cover-login</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="flow-section">
+      <div class="sec-header">💳 Supplier — Line Credit Request Flow</div>
+      <div class="flow-steps">
+        <div class="step highlight">Login</div>
+        <div class="fa">→</div>
+        <div class="step">/supplier/new-line-application<br/><span style="font-size:10px;color:#64748b">document_type = credit_line</span></div>
+        <div class="fa">→</div>
+        <div class="step">Section 1<br/><span style="font-size:10px;color:#64748b">company info · tax ID<br/>business type · credit limit · period</span></div>
+        <div class="fa">→</div>
+        <div class="step">Section 2<br/><span style="font-size:10px;color:#64748b">Upload เอกสาร<br/>Storage bucket: document</span></div>
+      </div>
+      <div class="sub-row" style="margin-top:10px">
+        <div class="sub-label">เอกสารที่ต้องแนบ:</div>
+        <div class="step" style="min-width:auto;padding:5px 9px;font-size:10px;font-weight:500">PP30</div>
+        <div class="step" style="min-width:auto;padding:5px 9px;font-size:10px;font-weight:500">NCB</div>
+        <div class="step" style="min-width:auto;padding:5px 9px;font-size:10px;font-weight:500">AR</div>
+        <div class="step" style="min-width:auto;padding:5px 9px;font-size:10px;font-weight:500">Consent Form</div>
+        <div class="step" style="min-width:auto;padding:5px 9px;font-size:10px;font-weight:500">PDPA</div>
+        <div class="step" style="min-width:auto;padding:5px 9px;font-size:10px;font-weight:500">Bank Statement</div>
+        <div class="step" style="min-width:auto;padding:5px 9px;font-size:10px;font-weight:500;opacity:.6">Credit Assessment (optional)</div>
+      </div>
+      <div class="sub-row">
+        <div class="step warn">Save Draft<br/><span style="font-size:10px">uploadFilesToStorage<br/>→ createapplications</span></div>
+        <div class="fa">→</div>
+        <div class="step success">Submit<br/><span style="font-size:10px">status: under_review</span></div>
+        <div class="fa">→</div>
+        <div class="step" style="border-color:#7c3aed;background:#ede9fe;color:#5b21b6">Lender Review</div>
+        <div class="fa">→</div>
+        <div class="step success">Approve<br/><span style="font-size:10px">credit_facilities updated</span></div>
+        <div style="color:#94a3b8;font-size:13px;font-weight:600">or</div>
+        <div class="step danger">Reject<br/><span style="font-size:10px">+ rejection_note</span></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="flow-section">
+      <div class="sec-header">📦 Supplier — Factoring Request Flow</div>
+      <div class="flow-steps">
+        <div class="step highlight">Login</div>
+        <div class="fa">→</div>
+        <div class="step">ดู Credit Facility<br/><span style="font-size:10px;color:#64748b">getcreditfacility</span></div>
+        <div class="fa">→</div>
+        <div class="step">เลือก Invoice<br/><span style="font-size:10px;color:#64748b">listinvoicessupplier</span></div>
+        <div class="fa">→</div>
+        <div class="step">กรอกรายละเอียด<br/><span style="font-size:10px;color:#64748b">amount · period · payment</span></div>
+        <div class="fa">→</div>
+        <div class="step warn">Save Draft<br/><span style="font-size:10px">createapplications</span></div>
+        <div class="fa">→</div>
+        <div class="step success">Submit<br/><span style="font-size:10px">status: under_review</span></div>
+      </div>
+      <div class="sub-row">
+        <div class="sub-label">หากถูก Reject:</div>
+        <div class="step danger">Rejected</div>
+        <div class="fa">→</div>
+        <div class="step">Edit Request<br/><span style="font-size:10px">แก้ไข Invoice/ข้อมูล</span></div>
+        <div class="fa">→</div>
+        <div class="step warn">updateapplication</div>
+        <div class="fa">→</div>
+        <div class="step success">Re-submit</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="flow-section">
+      <div class="sec-header">🏦 Lender — Approve / Reject Flow</div>
+      <div class="flow-steps">
+        <div class="step highlight">Login</div>
+        <div class="fa">→</div>
+        <div class="step">Request List<br/><span style="font-size:10px;color:#64748b">listapplication</span></div>
+        <div class="fa">→</div>
+        <div class="step">View Request<br/><span style="font-size:10px;color:#64748b">ดูรายละเอียด + ไฟล์</span></div>
+        <div class="fa">→</div>
+        <div class="step warn">ดูไฟล์<br/><span style="font-size:10px">getsignedurl</span></div>
+        <div class="fa">→</div>
+        <div class="step success">Approve<br/><span style="font-size:10px">status: approved</span></div>
+        <div style="color:#94a3b8;font-size:13px;font-weight:600">or</div>
+        <div class="step danger">Reject<br/><span style="font-size:10px">+ rejection note</span></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="flow-section">
+      <div class="sec-header">👑 GEC — Monitoring Flow</div>
+      <div class="flow-steps">
+        <div class="step highlight">Login</div>
+        <div class="fa">→</div>
+        <div class="step">PO / Invoice List<br/><span style="font-size:10px;color:#64748b">ดู + search + export</span></div>
+        <div class="fa">→</div>
+        <div class="step">Request List<br/><span style="font-size:10px;color:#64748b">ดูสถิติ + status</span></div>
+        <div class="fa">→</div>
+        <div class="step">View Request<br/><span style="font-size:10px;color:#64748b">read-only</span></div>
+      </div>
+      <div class="sub-row">
+        <div class="sub-label">Registration:</div>
+        <div class="step">Registration List</div>
+        <div class="fa">→</div>
+        <div class="step success">Approve Supplier</div>
+        <div style="color:#94a3b8;font-size:13px;font-weight:600">or</div>
+        <div class="step danger">Reject</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ BACKEND ══ -->
+  <div id="tab-backend" class="panel">
+
+    <div class="sec-header">⚙️ Edge Functions (Supabase Deno)</div>
+    <div class="ef-grid" style="margin-bottom:24px">
+      <div class="ef-card"><div class="ef-name">listallpo</div><div class="ef-desc">ดึง purchase_orders ทั้งหมด · pagination · search · status filter</div><div class="ef-role gec">GEC only</div></div>
+      <div class="ef-card"><div class="ef-name">listinvoices</div><div class="ef-desc">ดึง invoices ทั้งหมด · pagination · search · status filter</div><div class="ef-role gec">GEC only</div></div>
+      <div class="ef-card"><div class="ef-name">listinvoicessupplier</div><div class="ef-desc">ดึง invoices ของ supplier นั้น (filter by supplier_code จาก profile)</div><div class="ef-role supplier">Supplier only</div></div>
+      <div class="ef-card"><div class="ef-name">listapplication</div><div class="ef-desc">ดึง applications · supplier เห็นแค่ตัวเอง, lender/GEC เห็นทั้งหมด</div><div class="ef-role all">All roles</div></div>
+      <div class="ef-card"><div class="ef-name">createapplications</div><div class="ef-desc">สร้าง application ใหม่ พร้อม po_items array (invoice references)</div><div class="ef-role supplier">Supplier</div></div>
+      <div class="ef-card"><div class="ef-name">updateapplication</div><div class="ef-desc">อัปเดต application (status, amount, po_items) ใช้ PATCH</div><div class="ef-role all">All roles</div></div>
+      <div class="ef-card"><div class="ef-name">getcreditfacility</div><div class="ef-desc">ดึง credit limit · already_used · remaining ของ supplier</div><div class="ef-role supplier">Supplier</div></div>
+      <div class="ef-card"><div class="ef-name">getsignedurl</div><div class="ef-desc">สร้าง signed URL สำหรับ bucket "document" (private) อายุ 1 ชั่วโมง</div><div class="ef-role all">All roles</div></div>
+    </div>
+
+    <div class="sec-header">🗄️ Database Tables</div>
+    <div class="db-grid" style="margin-bottom:24px">
+      <div class="db-card"><div class="db-name">profiles</div><div class="db-cols">id · email · full_name<br/>company_name · role<br/>status · supplier_code<br/>lender_code · lender_org</div></div>
+      <div class="db-card"><div class="db-name">applications</div><div class="db-cols">id · document_type<br/>company_name · status<br/>submitted_by · buyer_name<br/>requested_amount<br/>credit_period · payment_type<br/>remark · rejection_note</div></div>
+      <div class="db-card"><div class="db-name">application_po_items</div><div class="db-cols">id · application_id<br/>po_number (invoice_no)<br/>po_date · buyer · amount<br/>term (po_no ref)<br/>po_status</div></div>
+      <div class="db-card"><div class="db-name">purchase_orders</div><div class="db-cols">id · po_no · po_date<br/>supplier_code<br/>buyer_name · amount<br/>status</div></div>
+      <div class="db-card"><div class="db-name">invoices</div><div class="db-cols">id · invoice_no<br/>invoice_date · supplier_code<br/>buyer_name · po_no<br/>amount_incl_vat · status</div></div>
+      <div class="db-card"><div class="db-name">credit_facilities</div><div class="db-cols">supplier_code<br/>credit_limit · already_used<br/>remaining<br/>credit_period · interest_rate</div></div>
+      <div class="db-card"><div class="db-name">Storage: document</div><div class="db-cols">Private bucket<br/>Access via getsignedurl<br/>Service role key<br/>1hr signed URL</div></div>
+    </div>
+
+    <div class="sec-header">🔑 Token Pattern</div>
+    <div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:14px 18px;font-size:13px;color:#374151;line-height:1.9">
+      ทุก API call ใช้ <strong>fresh token</strong> จาก <code>$supabase.auth.getSession()</code> เสมอ
+      — ไม่ใช้ cached <code>authStore.accessToken</code>
+      เพื่อให้ Supabase auto-refresh token อัตโนมัติก่อนหมดอายุ (1 ชั่วโมง)
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
