@@ -8,6 +8,13 @@ export const useSupplierLineApplication = () => {
     const { $supabase } = useNuxtApp();
     const authStore = useAuthStore();
 
+    const getJwt = async (): Promise<string> => {
+        const { data: { session } } = await ($supabase as any).auth.getSession();
+        const jwt = session?.access_token || authStore.accessToken;
+        if (!jwt) throw new Error('กรุณาเข้าสู่ระบบใหม่');
+        return jwt;
+    };
+
     const generateId = () => {
         const now = new Date();
         const yy = String(now.getFullYear()).slice(2);
@@ -96,9 +103,11 @@ export const useSupplierLineApplication = () => {
 
     // ── POST createapplications (first save) ──────────────────────
     const callCreate = async (status: 'draft' | 'under_review') => {
+        const jwt = await getJwt();
+
         const res = await fetch(CREATE_URL, {
             method : 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
             body   : JSON.stringify({
                 id                    : application.value.applicationId,
                 document_type         : 'credit_line',
@@ -112,16 +121,20 @@ export const useSupplierLineApplication = () => {
                 documents             : buildDocuments(),
             }),
         });
-        const json = await res.json();
+        const text = await res.text();
+        let json: any = {};
+        try { json = JSON.parse(text); } catch {}
         if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
         return json;
     };
 
     // ── PATCH updateapplication (subsequent saves) ────────────────
     const callUpdate = async (status: 'draft' | 'under_review') => {
+        const jwt = await getJwt();
+
         const res = await fetch(UPDATE_URL, {
             method : 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
             body   : JSON.stringify({
                 id                    : application.value.applicationId,
                 status,
@@ -132,7 +145,9 @@ export const useSupplierLineApplication = () => {
                 documents             : buildDocuments(),
             }),
         });
-        const json = await res.json();
+        const text = await res.text();
+        let json: any = {};
+        try { json = JSON.parse(text); } catch {}
         if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
         return json;
     };
@@ -140,6 +155,7 @@ export const useSupplierLineApplication = () => {
     // ── Save Draft ─────────────────────────────────────────────────
     const saveDraft = async () => {
         try {
+            await getJwt(); // validate auth before uploading files to avoid orphaned storage objects
             const upload = await uploadFilesToStorage();
             if (!upload.ok) throw new Error(`อัปโหลดไฟล์ไม่สำเร็จ: ${upload.failedDoc}`);
 
@@ -158,6 +174,7 @@ export const useSupplierLineApplication = () => {
     // ── Submit Application ─────────────────────────────────────────
     const submitApplication = async () => {
         try {
+            await getJwt(); // validate auth before uploading files to avoid orphaned storage objects
             const upload = await uploadFilesToStorage();
             if (!upload.ok) throw new Error(`อัปโหลดไฟล์ไม่สำเร็จ: ${upload.failedDoc}`);
 

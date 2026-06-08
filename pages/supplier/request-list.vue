@@ -76,6 +76,12 @@
             </div>
         </div>
 
+        <!-- Fetch error banner -->
+        <div v-if="fetchError" class="panel mb-4 flex items-center justify-between gap-3 border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
+            <span>{{ fetchError }}</span>
+            <button @click="fetchRequests()" class="btn btn-outline-danger btn-sm">ลองใหม่</button>
+        </div>
+
         <!-- Table -->
         <div class="panel">
             <div v-if="isLoading" class="flex items-center justify-center py-20">
@@ -219,6 +225,7 @@
                                 <p class="mb-4 text-sm text-white-dark">
                                     เมื่อส่งแล้วจะไม่สามารถแก้ไขหรือลบได้ ยืนยันหรือไม่?
                                 </p>
+                                <p v-if="submitError" class="mb-3 text-sm text-danger">{{ submitError }}</p>
                                 <div class="flex justify-end gap-3">
                                     <button @click="closeModals" class="btn btn-outline-secondary">ยกเลิก</button>
                                     <button @click="submitRequest" class="btn btn-success" :disabled="!!actionLoading">
@@ -284,14 +291,24 @@
     const authStore = useAuthStore();
     const { logout } = useAuth();
 
+    const getJwt = async (): Promise<string> => {
+        const { $supabase } = useNuxtApp();
+        const { data: { session } } = await ($supabase as any).auth.getSession();
+        const jwt = session?.access_token || authStore.accessToken;
+        if (!jwt) throw new Error('กรุณาเข้าสู่ระบบใหม่');
+        return jwt;
+    };
+
     const LIST_URL   = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/listapplication';
     const UPDATE_URL = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/updateapplication';
     const DELETE_URL = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/deleteapplication';
 
-    const requests     = ref<any[]>([]);
-    const stats        = ref({ draft: 0, under_review: 0, approved: 0, rejected: 0 });
-    const isLoading    = ref(false);
+    const requests      = ref<any[]>([]);
+    const stats         = ref({ draft: 0, under_review: 0, approved: 0, rejected: 0 });
+    const isLoading     = ref(false);
     const actionLoading = ref<string | null>(null);
+    const fetchError    = ref<string | null>(null);
+    const submitError   = ref<string | null>(null);
     const searchText   = ref('');
     const filterStatus = ref('all');
     const filterType   = ref('all');
@@ -308,8 +325,11 @@
 
     // ── Fetch from Edge Function ───────────────────────────────────
     const fetchRequests = async () => {
-        isLoading.value = true;
+        isLoading.value  = true;
+        fetchError.value = null;
         try {
+            const jwt = await getJwt();
+
             const params = new URLSearchParams();
             params.set('submitted_by', authStore.user?.id ?? '');
             params.set('page',  String(currentPage.value));
@@ -318,14 +338,20 @@
             if (filterType.value   !== 'all') params.set('document_type', filterType.value);
             if (searchText.value.trim())      params.set('search',        searchText.value.trim());
 
-            const res  = await fetch(`${LIST_URL}?${params.toString()}`);
-            const json = await res.json();
+            const res  = await fetch(`${LIST_URL}?${params.toString()}`, {
+                headers: { Authorization: `Bearer ${jwt}` },
+            });
+            const text = await res.text();
+            let json: any = {};
+            try { json = JSON.parse(text); } catch {}
+            if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
 
             requests.value   = json.data       ?? [];
             totalItems.value = json.pagination?.total      ?? 0;
             totalPages.value = json.pagination?.totalPages ?? 0;
             stats.value      = json.stats ?? { draft: 0, under_review: 0, approved: 0, rejected: 0 };
-        } catch (err) {
+        } catch (err: any) {
+            fetchError.value = err.message;
             console.error('Error fetching requests:', err);
         } finally {
             isLoading.value = false;
@@ -347,24 +373,31 @@
     const closeModals = () => {
         isSubmitModalOpen.value = false;
         isDeleteModalOpen.value = false;
-        selectedRequest.value = null;
+        selectedRequest.value   = null;
+        submitError.value       = null;
     };
 
     // ── Submit via updateapplication PATCH ────────────────────────
     const submitRequest = async () => {
         if (!selectedRequest.value) return;
         actionLoading.value = selectedRequest.value.id;
+        submitError.value   = null;
         try {
+            const jwt = await getJwt();
+
             const res = await fetch(UPDATE_URL, {
                 method : 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
                 body   : JSON.stringify({ id: selectedRequest.value.id, status: 'under_review' }),
             });
-            const json = await res.json();
+            const text = await res.text();
+            let json: any = {};
+            try { json = JSON.parse(text); } catch {}
             if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
             closeModals();
             await fetchRequests();
-        } catch (err) {
+        } catch (err: any) {
+            submitError.value = err.message;
             console.error('Error submitting request:', err);
         } finally {
             actionLoading.value = null;
@@ -376,7 +409,7 @@
         if (!selectedRequest.value) return;
         actionLoading.value = selectedRequest.value.id;
         try {
-            const jwt = authStore.accessToken;
+            const jwt = await getJwt();
             const res = await fetch(`${DELETE_URL}?id=${encodeURIComponent(selectedRequest.value.id)}`, {
                 method : 'DELETE',
                 headers: { Authorization: `Bearer ${jwt}` },

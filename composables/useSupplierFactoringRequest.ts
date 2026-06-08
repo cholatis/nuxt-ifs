@@ -9,6 +9,14 @@ const PO_URL      = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/listp
 export const useSupplierFactoringRequest = () => {
     const authStore = useAuthStore();
 
+    const getJwt = async (): Promise<string> => {
+        const { $supabase } = useNuxtApp();
+        const { data: { session } } = await ($supabase as any).auth.getSession();
+        const jwt = session?.access_token || authStore.accessToken;
+        if (!jwt) throw new Error('กรุณาเข้าสู่ระบบใหม่');
+        return jwt;
+    };
+
     const generateId = () => {
         const now  = new Date();
         const yy   = String(now.getFullYear()).slice(2);
@@ -55,9 +63,7 @@ export const useSupplierFactoringRequest = () => {
         isLoadingInvoice.value = true;
         invoiceError.value     = '';
         try {
-            const { $supabase } = useNuxtApp();
-            const { data: { session } } = await ($supabase as any).auth.getSession();
-            const jwt = session?.access_token || authStore.accessToken;
+            const jwt = await getJwt();
 
             const res  = await fetch(`${INVOICE_URL}?limit=200`, {
                 headers: { Authorization: `Bearer ${jwt}` },
@@ -77,9 +83,7 @@ export const useSupplierFactoringRequest = () => {
         isLoadingPO.value = true;
         poError.value     = '';
         try {
-            const { $supabase } = useNuxtApp();
-            const { data: { session } } = await ($supabase as any).auth.getSession();
-            const jwt = session?.access_token || authStore.accessToken;
+            const jwt = await getJwt();
 
             const res  = await fetch(`${PO_URL}?limit=200`, {
                 headers: { Authorization: `Bearer ${jwt}` },
@@ -163,21 +167,27 @@ export const useSupplierFactoringRequest = () => {
 
     // ── POST createapplications (first save) ──────────────────────
     const callCreate = async (status: 'draft' | 'under_review') => {
+        const jwt = await getJwt();
+
         const res = await fetch(CREATE_URL, {
             method : 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
             body   : JSON.stringify(buildPayload(status)),
         });
-        const json = await res.json();
+        const text = await res.text();
+        let json: any = {};
+        try { json = JSON.parse(text); } catch {}
         if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
         return json;
     };
 
     // ── PATCH updateapplication (subsequent saves) ────────────────
     const callUpdate = async (status: 'draft' | 'under_review') => {
+        const jwt = await getJwt();
+
         const res = await fetch(UPDATE_URL, {
             method : 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
             body   : JSON.stringify({
                 id              : form.value.requestId,
                 status,
@@ -190,7 +200,9 @@ export const useSupplierFactoringRequest = () => {
                 po_items        : buildPoItems(),
             }),
         });
-        const json = await res.json();
+        const text = await res.text();
+        let json: any = {};
+        try { json = JSON.parse(text); } catch {}
         if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
         return json;
     };

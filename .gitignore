@@ -1,0 +1,9 @@
+node_modules/
+.nuxt/
+.output/
+dist/
+
+# Environment variables — never commit real credentials
+.env
+.env.*
+!.env.example
