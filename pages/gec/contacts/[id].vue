@@ -119,7 +119,7 @@
                 <!-- Confirmation Dialog -->
                 <Teleport to="body">
                     <TransitionRoot appear :show="showCreateUserDialog" as="template">
-                        <Dialog as="div" @close="showCreateUserDialog = false" class="relative z-50">
+                        <Dialog as="div" @close="showCreateUserDialog = false; createUserError = ''" class="relative z-50">
                             <TransitionChild as="template"
                                 enter="duration-200 ease-out" enter-from="opacity-0" enter-to="opacity-100"
                                 leave="duration-150 ease-in"  leave-from="opacity-100" leave-to="opacity-0">
@@ -451,12 +451,17 @@ const createUserAccount = async () => {
             body: JSON.stringify({ contact_id: Number(route.params.id) }),
         });
 
-        const data = await res.json();
+        let data: any = {};
+        try { data = await res.json(); } catch { /* non-JSON body */ }
         if (!res.ok) {
-            createUserError.value = data.error ?? 'เกิดข้อผิดพลาด';
+            createUserError.value = data?.error ?? `เกิดข้อผิดพลาด (HTTP ${res.status})`;
             return;
         }
 
+        if (!data.user_id) {
+            createUserError.value = 'เกิดข้อผิดพลาด: ไม่ได้รับ User ID';
+            return;
+        }
         metadata.linked_user_id = data.user_id;
         showCreateUserDialog.value = false;
     } catch (err: any) {
