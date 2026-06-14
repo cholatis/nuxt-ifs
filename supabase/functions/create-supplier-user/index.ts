@@ -41,7 +41,13 @@ Deno.serve(async (req: Request) => {
         }
 
         // ── 2. อ่าน request body ───────────────────────────────
-        const { contact_id } = await req.json();
+        let contact_id: unknown;
+        try {
+            const body = await req.json();
+            contact_id = body?.contact_id;
+        } catch {
+            return json({ error: 'Invalid JSON body' }, 400);
+        }
         if (!contact_id) {
             return json({ error: 'contact_id is required' }, 400);
         }
@@ -72,8 +78,16 @@ Deno.serve(async (req: Request) => {
         }
 
         // ── 6. ตรวจว่า email ยังไม่มีใน auth.users ────────────
-        const { data: existingUsers } = await adminClient.auth.admin.listUsers();
-        const emailTaken = existingUsers?.users?.some((u: any) => u.email === contact.email);
+        const { data: existingUsers, error: listErr } = await adminClient.auth.admin.listUsers({
+            page   : 1,
+            perPage: 1,
+            // @ts-ignore — search param supported at runtime but missing from some type versions
+            search : contact.email,
+        });
+        if (listErr) {
+            return json({ error: 'Failed to check existing users' }, 500);
+        }
+        const emailTaken = existingUsers?.users?.some((u) => u.email === contact.email);
         if (emailTaken) {
             return json({ error: 'Email already registered' }, 409);
         }
@@ -114,7 +128,8 @@ Deno.serve(async (req: Request) => {
 
         if (profileInsertErr) {
             // rollback: ลบ user ที่เพิ่งสร้าง
-            await adminClient.auth.admin.deleteUser(userId);
+            const { error: rollbackErr } = await adminClient.auth.admin.deleteUser(userId);
+            if (rollbackErr) console.error('[create-supplier-user] rollback deleteUser failed:', rollbackErr.message);
             return json({ error: `Failed to create profile: ${profileInsertErr.message}` }, 500);
         }
 
@@ -125,6 +140,10 @@ Deno.serve(async (req: Request) => {
             .eq('id', contact_id);
 
         if (updateErr) {
+            // rollback: ลบ profile และ user ที่เพิ่งสร้าง
+            await adminClient.from('profiles').delete().eq('id', userId);
+            const { error: rollbackErr } = await adminClient.auth.admin.deleteUser(userId);
+            if (rollbackErr) console.error('[create-supplier-user] rollback deleteUser failed:', rollbackErr.message);
             return json({ error: `Failed to link contact: ${updateErr.message}` }, 500);
         }
 
