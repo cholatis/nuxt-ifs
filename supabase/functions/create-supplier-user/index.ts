@@ -111,10 +111,10 @@ Deno.serve(async (req: Request) => {
 
         const userId = inviteData.user.id;
 
-        // ── 8. INSERT profiles ─────────────────────────────────
+        // ── 8. UPSERT profiles (trigger อาจสร้างก่อนแล้ว) ────────
         const { error: profileInsertErr } = await adminClient
             .from('profiles')
-            .insert({
+            .upsert({
                 id                   : userId,
                 email                : contact.email,
                 full_name            : contact.name,
@@ -124,7 +124,7 @@ Deno.serve(async (req: Request) => {
                 supplier_code        : contact.supplier_code,
                 supplier_name        : contact.supplier_name ?? null,
                 must_change_password : true,
-            });
+            }, { onConflict: 'id' });
 
         if (profileInsertErr) {
             // rollback: ลบ user ที่เพิ่งสร้าง
