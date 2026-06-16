@@ -257,11 +257,53 @@
                         </table>
                     </div>
                 </div>
+                <!-- ── เอกสารแนบ (invoice files) ── -->
+                <div class="panel mb-5">
+                    <h5 class="mb-4 text-lg font-semibold flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">4</span>
+                        เอกสารแนบ
+                    </h5>
+
+                    <div v-if="docsLoading" class="flex items-center gap-2 py-4 text-white-dark text-sm">
+                        <span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-primary border-l-transparent"></span>
+                        กำลังโหลดเอกสาร...
+                    </div>
+
+                    <div v-else-if="invoiceDocs.length === 0" class="py-6 text-center text-white-dark text-sm">
+                        ไม่มีเอกสารแนบ
+                    </div>
+
+                    <ul v-else class="space-y-2">
+                        <li
+                            v-for="doc in invoiceDocs"
+                            :key="doc.name"
+                            class="flex items-center justify-between gap-3 rounded-lg border border-gray-200 dark:border-[#191e3a] px-4 py-2.5 text-sm"
+                        >
+                            <div class="flex items-center gap-2 min-w-0">
+                                <svg class="w-4 h-4 text-primary flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <span class="truncate font-medium dark:text-white-light">{{ doc.name }}</span>
+                                <span class="text-white-dark flex-none text-xs">({{ (doc.size / 1024).toFixed(1) }} KB)</span>
+                            </div>
+                            <a
+                                v-if="doc.signedUrl"
+                                :href="doc.signedUrl"
+                                target="_blank"
+                                class="btn btn-sm btn-outline-primary flex-none"
+                            >
+                                ดาวน์โหลด
+                            </a>
+                            <span v-else class="text-xs text-white-dark flex-none">URL ไม่พร้อม</span>
+                        </li>
+                    </ul>
+                </div>
+
                 <!-- ── Repayment Section (drawdown only) ── -->
                 <div class="panel mb-5">
                     <h5 class="mb-4 text-lg font-semibold flex items-center justify-between">
                         <div class="flex items-center gap-2">
-                            <span class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">4</span>
+                            <span class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">5</span>
                             การคืนวงเงิน
                         </div>
                         <button
@@ -663,7 +705,7 @@
     import { useAuthStore } from '@/stores/auth';
     import Swal from 'sweetalert2';
 
-    useHead({ title: 'View Request - IFS Finance' });
+    useHead({ title: 'View Request - NEX Finance' });
     definePageMeta({ layout: 'default' });
 
     const GET_URL        = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/getapplication';
@@ -858,6 +900,44 @@
         }
     };
 
+    // ── Invoice docs (drawdown attachments) ───────────────────────
+    type InvoiceDoc = { name: string; size: number; signedUrl: string | null };
+    const invoiceDocs = ref<InvoiceDoc[]>([]);
+    const docsLoading = ref(false);
+
+    const fetchInvoiceDocs = async () => {
+        if (!app.value?.id) return;
+        docsLoading.value = true;
+        try {
+            const { $supabase } = useNuxtApp();
+
+            const { data: docs, error } = await ($supabase as any)
+                .from('application_documents')
+                .select('file_name, file_size, file_path')
+                .eq('application_id', app.value.id)
+                .eq('doc_id', 'invoice_files');
+
+            if (error || !docs?.length) return;
+
+            const paths = docs.map((d: any) => d.file_path);
+            const { data: signedData } = await ($supabase as any)
+                .storage
+                .from('document')
+                .createSignedUrls(paths, 3600);
+
+            invoiceDocs.value = docs.map((d: any) => {
+                const signed = (signedData ?? []).find((s: any) => s.path === d.file_path);
+                return {
+                    name     : d.file_name,
+                    size     : d.file_size ?? 0,
+                    signedUrl: signed?.signedUrl ?? null,
+                };
+            });
+        } finally {
+            docsLoading.value = false;
+        }
+    };
+
     // ── Signed URL ────────────────────────────────────────────────
     const fileLoading = ref<Record<string, boolean>>({});
 
@@ -983,7 +1063,7 @@
     onMounted(async () => {
         await fetchApp();
         if (app.value?.document_type === 'drawdown') {
-            await fetchRepayInfo();
+            await Promise.all([fetchRepayInfo(), fetchInvoiceDocs()]);
         }
     });
 </script>
