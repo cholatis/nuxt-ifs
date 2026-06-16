@@ -781,13 +781,11 @@
         fetchError.value = '';
         try {
             const jwt = authStore.accessToken;
-            console.log('[view-request] token length:', jwt?.length, '| id:', route.params.id);
 
             const res  = await fetch(`${GET_URL}?id=${encodeURIComponent(String(route.params.id))}`, {
                 headers: { Authorization: `Bearer ${jwt}` },
             });
             const json = await res.json();
-            console.log('[view-request] response:', res.status, json);
 
             if (!res.ok) {
                 fetchError.value = `[${res.status}] ${json.error ?? JSON.stringify(json)}`;
