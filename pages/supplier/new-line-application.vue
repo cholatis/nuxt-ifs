@@ -1,5 +1,13 @@
 <template>
     <div>
+        <!-- Draft loading overlay -->
+        <div v-if="isLoadingDraft" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+            <div class="bg-white dark:bg-[#1b2e4b] rounded-xl p-6 flex items-center gap-3 shadow-xl">
+                <span class="inline-block h-5 w-5 animate-spin rounded-full border-[3px] border-primary border-l-transparent"></span>
+                <span class="font-medium text-dark dark:text-white-light">กำลังโหลด draft...</span>
+            </div>
+        </div>
+
         <!-- Header Bar -->
         <div class="bg-primary text-white rounded-lg p-4 flex items-center justify-between mb-5 shadow-md">
             <div class="flex items-center gap-4">
@@ -97,8 +105,8 @@
                         <span v-if="doc.required" class="badge badge-outline-danger text-[10px] py-0.5 px-1.5 uppercase">Required</span>
                         <span v-else class="badge badge-outline-secondary text-[10px] py-0.5 px-1.5 uppercase">Optional</span>
                     </div>
-                    <p class="text-xs text-white-dark" v-if="doc.files.length > 0">
-                        Files: {{ doc.files.map((f: any) => f.name).join(', ') }}
+                    <p class="text-xs text-white-dark" v-if="doc.files.length > 0 || doc.fileName">
+                        Files: {{ doc.files.length > 0 ? doc.files.map((f: any) => f.name).join(', ') : doc.fileName }}
                     </p>
                 </div>
                 <div class="flex items-center gap-3 flex-none">
@@ -146,16 +154,36 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, computed } from 'vue';
+    import { ref, onMounted } from 'vue';
     import { useSupplierLineApplication } from '@/composables/useSupplierLineApplication';
     import Swal from 'sweetalert2';
 
-    useHead({ title: 'New Line Application - IFS Finance' });
+    useHead({ title: 'New Line Application - NEX Finance' });
     definePageMeta({ layout: 'default' });
 
-    const { application, uploadProgress, isFormValid, saveDraft, submitApplication, handleFileUpload } = useSupplierLineApplication();
+    const route = useRoute();
+    const { application, uploadProgress, isFormValid, isSaved, loadDraft, saveDraft, submitApplication, handleFileUpload } = useSupplierLineApplication();
 
-    const lastSaved = ref('');
+    const lastSaved      = ref('');
+    const isLoadingDraft = ref(false);
+
+    onMounted(async () => {
+        const draftId = route.query.draft as string | undefined;
+        if (!draftId) return;
+
+        isLoadingDraft.value = true;
+        const result = await loadDraft(draftId);
+        isLoadingDraft.value = false;
+
+        if (!result.ok) {
+            Swal.fire({
+                icon              : 'error',
+                title             : 'โหลด Draft ไม่สำเร็จ',
+                text              : result.error,
+                confirmButtonColor: '#e7515a',
+            });
+        }
+    });
 
     const getStatusBadgeClass = (status: string) => {
         switch (status) {
