@@ -158,7 +158,7 @@ export const useSupplierLineApplication = () => {
     const loadDraft = async (id: string): Promise<{ ok: boolean; error?: string }> => {
         try {
             const { data: app, error: appErr } = await ($supabase as any)
-                .from('line_applications')
+                .from('credit_applications')
                 .select('id, status, company_name, tax_id, business_type, requested_credit_limit, credit_period')
                 .eq('id', id)
                 .single();
@@ -166,7 +166,7 @@ export const useSupplierLineApplication = () => {
             if (appErr || !app) return { ok: false, error: 'ไม่พบ draft นี้' };
 
             const { data: docs, error: docErr } = await ($supabase as any)
-                .from('line_application_documents')
+                .from('application_documents')
                 .select('doc_id, upload_status, file_path, file_name')
                 .eq('application_id', id);
 
