@@ -267,17 +267,28 @@ export const useSupplierFactoringRequest = () => {
     // ── Save Draft ─────────────────────────────────────────────────
     const saveDraft = async () => {
         try {
+            const firstSave = !isSaved.value;
+
+            // 1. Create/update application first — server may assign a different ID
+            const result = firstSave
+                ? await callCreate('draft')
+                : await callUpdate('draft');
+
+            // 2. Sync requestId with server-assigned ID (first save only)
+            if (firstSave) {
+                const serverId = result?.data?.id ?? result?.id;
+                if (serverId) form.value.requestId = serverId;
+                isSaved.value = true;
+            }
+
+            // 3. Upload files — now uses correct requestId
             const upload = await uploadInvoiceFiles();
             if (!upload.ok) throw new Error(`อัปโหลดไฟล์ไม่สำเร็จ: ${upload.failedFile}`);
 
-            const result = isSaved.value
-                ? await callUpdate('draft')
-                : await callCreate('draft');
-
+            // 4. Save document records with correct application_id
             await saveDocumentRecords(upload.newUploads);
 
             form.value.status = 'draft';
-            isSaved.value     = true;
             return { success: true, timestamp: new Date().toLocaleTimeString(), data: result.data };
         } catch (err: any) {
             return { success: false, message: err.message };
@@ -287,17 +298,28 @@ export const useSupplierFactoringRequest = () => {
     // ── Submit Request ─────────────────────────────────────────────
     const submitRequest = async () => {
         try {
+            const firstSave = !isSaved.value;
+
+            // 1. Create/update application first — server may assign a different ID
+            const result = firstSave
+                ? await callCreate('under_review')
+                : await callUpdate('under_review');
+
+            // 2. Sync requestId with server-assigned ID (first save only)
+            if (firstSave) {
+                const serverId = result?.data?.id ?? result?.id;
+                if (serverId) form.value.requestId = serverId;
+                isSaved.value = true;
+            }
+
+            // 3. Upload files — now uses correct requestId
             const upload = await uploadInvoiceFiles();
             if (!upload.ok) throw new Error(`อัปโหลดไฟล์ไม่สำเร็จ: ${upload.failedFile}`);
 
-            const result = isSaved.value
-                ? await callUpdate('under_review')
-                : await callCreate('under_review');
-
+            // 4. Save document records with correct application_id
             await saveDocumentRecords(upload.newUploads);
 
             form.value.status = 'under_review';
-            isSaved.value     = true;
             return { success: true, message: 'Submitted', data: result.data };
         } catch (err: any) {
             return { success: false, message: err.message };
