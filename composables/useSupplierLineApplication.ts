@@ -154,6 +154,48 @@ export const useSupplierLineApplication = () => {
         return json;
     };
 
+    // ── Load Draft ────────────────────────────────────────────────
+    const loadDraft = async (id: string): Promise<{ ok: boolean; error?: string }> => {
+        try {
+            const { data: app, error: appErr } = await ($supabase as any)
+                .from('line_applications')
+                .select('id, status, company_name, tax_id, business_type, requested_credit_limit, credit_period')
+                .eq('id', id)
+                .single();
+
+            if (appErr || !app) return { ok: false, error: 'ไม่พบ draft นี้' };
+
+            const { data: docs, error: docErr } = await ($supabase as any)
+                .from('line_application_documents')
+                .select('doc_id, upload_status, file_path, file_name')
+                .eq('application_id', id);
+
+            if (docErr) return { ok: false, error: docErr.message };
+
+            application.value.applicationId        = app.id;
+            application.value.status               = app.status;
+            application.value.companyName          = app.company_name ?? '';
+            application.value.taxId                = app.tax_id ?? '';
+            application.value.businessType         = app.business_type ?? '';
+            application.value.requestedCreditLimit = app.requested_credit_limit ?? null;
+            application.value.creditPeriod         = app.credit_period ?? null;
+
+            for (const doc of application.value.documents) {
+                const saved = (docs ?? []).find((d: any) => d.doc_id === doc.docId);
+                if (saved) {
+                    doc.uploadStatus = saved.upload_status ?? 'pending';
+                    doc.filePath     = saved.file_path ?? null;
+                    doc.fileName     = saved.file_name ?? null;
+                }
+            }
+
+            isSaved.value = true;
+            return { ok: true };
+        } catch (err: any) {
+            return { ok: false, error: err.message };
+        }
+    };
+
     // ── Save Draft ─────────────────────────────────────────────────
     const saveDraft = async () => {
         try {
@@ -192,5 +234,5 @@ export const useSupplierLineApplication = () => {
         }
     };
 
-    return { application, uploadProgress, isFormValid, isSaved, saveDraft, submitApplication, handleFileUpload };
+    return { application, uploadProgress, isFormValid, isSaved, loadDraft, saveDraft, submitApplication, handleFileUpload };
 };
