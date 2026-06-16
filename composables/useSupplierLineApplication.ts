@@ -34,9 +34,9 @@ export const useSupplierLineApplication = () => {
         requestedCreditLimit: null as number | null,
         creditPeriod: null as number | null,
         documents: [
-            { docId: 'company_cert', docName: 'หนังสือรับรองบริษัท (อายุไม่เกิน 3 เดือน)', required: true, files: [] as File[], uploadStatus: 'pending', filePath: null as string | null },
-            { docId: 'pp30',         docName: 'ภ.พ.30 (PP 30)',                              required: true, files: [] as File[], uploadStatus: 'pending', filePath: null as string | null },
-            { docId: 'remittance',   docName: 'Remittance (ย้อนหลัง 3 เดือน)',              required: true, files: [] as File[], uploadStatus: 'pending', filePath: null as string | null },
+            { docId: 'company_cert', docName: 'หนังสือรับรองบริษัท (อายุไม่เกิน 3 เดือน)', required: true, files: [] as File[], uploadStatus: 'pending', filePath: null as string | null, fileName: null as string | null },
+            { docId: 'pp30',         docName: 'ภ.พ.30 (PP 30)',                              required: true, files: [] as File[], uploadStatus: 'pending', filePath: null as string | null, fileName: null as string | null },
+            { docId: 'remittance',   docName: 'Remittance (ย้อนหลัง 3 เดือน)',              required: true, files: [] as File[], uploadStatus: 'pending', filePath: null as string | null, fileName: null as string | null },
         ],
     });
 
@@ -59,8 +59,10 @@ export const useSupplierLineApplication = () => {
         if (!files || files.length === 0) return;
         const doc = application.value.documents.find((d) => d.docId === docId);
         if (doc) {
-            doc.files = Array.from(files);
+            doc.files        = Array.from(files);
             doc.uploadStatus = 'uploaded';
+            doc.filePath     = null;
+            doc.fileName     = null;
         }
     };
 
