@@ -26,6 +26,63 @@ export const useSupplierFactoringRequest = () => {
     };
 
     const isSaved          = ref(false);
+
+    // ── Invoice file upload ────────────────────────────────────
+    type UploadedFile = { path: string; name: string; size: number };
+    const invoiceFiles      = ref<File[]>([]);
+    const uploadedFilePaths = ref<UploadedFile[]>([]);
+
+    const addFiles = (fileList: FileList | null) => {
+        if (!fileList) return;
+        const existing = new Set(invoiceFiles.value.map((f) => f.name));
+        invoiceFiles.value.push(...Array.from(fileList).filter((f) => !existing.has(f.name)));
+    };
+
+    const removeFile = (index: number) => {
+        invoiceFiles.value.splice(index, 1);
+    };
+
+    const uploadInvoiceFiles = async (): Promise<{ ok: boolean; failedFile?: string; newUploads: UploadedFile[] }> => {
+        const { $supabase } = useNuxtApp();
+        const requestId     = form.value.requestId;
+        const newUploads: UploadedFile[] = [];
+        const alreadyUploaded = new Set(uploadedFilePaths.value.map((u) => u.name));
+
+        for (const file of invoiceFiles.value) {
+            if (alreadyUploaded.has(file.name)) continue;
+
+            const path = `${requestId}/invoice-files/${file.name}`;
+            const { data, error } = await ($supabase as any)
+                .storage
+                .from('document')
+                .upload(path, file, { upsert: true });
+
+            if (error) return { ok: false, failedFile: `${file.name} (${error.message})`, newUploads };
+
+            const entry: UploadedFile = { path: data.path, name: file.name, size: file.size };
+            uploadedFilePaths.value.push(entry);
+            newUploads.push(entry);
+        }
+        return { ok: true, newUploads };
+    };
+
+    const saveDocumentRecords = async (newUploads: UploadedFile[]) => {
+        if (newUploads.length === 0) return;
+        const { $supabase } = useNuxtApp();
+
+        const rows = newUploads.map((u) => ({
+            application_id: form.value.requestId,
+            doc_id        : 'invoice_files',
+            doc_name      : u.name,
+            file_path     : u.path,
+            file_name     : u.name,
+            file_size     : u.size,
+            upload_status : 'uploaded',
+        }));
+
+        await ($supabase as any).from('application_documents').insert(rows);
+    };
+
     const isLoadingInvoice = ref(false);
     const isLoadingPO      = ref(false);
     const invoiceError     = ref('');
@@ -210,9 +267,15 @@ export const useSupplierFactoringRequest = () => {
     // ── Save Draft ─────────────────────────────────────────────────
     const saveDraft = async () => {
         try {
+            const upload = await uploadInvoiceFiles();
+            if (!upload.ok) throw new Error(`อัปโหลดไฟล์ไม่สำเร็จ: ${upload.failedFile}`);
+
             const result = isSaved.value
                 ? await callUpdate('draft')
                 : await callCreate('draft');
+
+            await saveDocumentRecords(upload.newUploads);
+
             form.value.status = 'draft';
             isSaved.value     = true;
             return { success: true, timestamp: new Date().toLocaleTimeString(), data: result.data };
@@ -224,9 +287,15 @@ export const useSupplierFactoringRequest = () => {
     // ── Submit Request ─────────────────────────────────────────────
     const submitRequest = async () => {
         try {
+            const upload = await uploadInvoiceFiles();
+            if (!upload.ok) throw new Error(`อัปโหลดไฟล์ไม่สำเร็จ: ${upload.failedFile}`);
+
             const result = isSaved.value
                 ? await callUpdate('under_review')
                 : await callCreate('under_review');
+
+            await saveDocumentRecords(upload.newUploads);
+
             form.value.status = 'under_review';
             isSaved.value     = true;
             return { success: true, message: 'Submitted', data: result.data };
@@ -237,6 +306,9 @@ export const useSupplierFactoringRequest = () => {
 
     return {
         form,
+        invoiceFiles,
+        addFiles,
+        removeFile,
         pendingInvoices,
         pendingPOs,
         activeItems,

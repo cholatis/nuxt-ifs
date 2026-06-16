@@ -153,7 +153,7 @@
                 </div>
 
                 <!-- Table -->
-                <div v-else class="table-responsive">
+                <div v-else class="table-responsive max-h-[420px] overflow-y-auto">
                     <table class="table-hover table">
                         <thead>
                             <tr>
@@ -272,6 +272,47 @@
             </div>
         </div>
 
+        <!-- Section 3 — Upload Documents -->
+        <div class="panel mb-5">
+            <h5 class="mb-4 text-lg font-semibold flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-bold">3</span>
+                Upload Documents
+                <span class="text-sm font-normal text-white-dark ml-1">(ไม่บังคับ — PDF, รูปภาพ, หรือไฟล์อื่นๆ)</span>
+            </h5>
+
+            <!-- Drop zone -->
+            <label
+                for="invoice-file-input"
+                class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-primary/30 rounded-xl cursor-pointer bg-primary/5 hover:bg-primary/10 transition-colors"
+                @dragover.prevent
+                @drop.prevent="(e: any) => addFiles(e.dataTransfer?.files ?? null)"
+            >
+                <svg class="w-8 h-8 text-primary/50 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                <span class="text-sm text-white-dark">ลากไฟล์มาวาง หรือ <span class="text-primary font-semibold">คลิกเพื่อเลือกไฟล์</span></span>
+                <input id="invoice-file-input" type="file" class="hidden" multiple @change="(e: any) => addFiles(e.target.files)" />
+            </label>
+
+            <!-- File list -->
+            <ul v-if="invoiceFiles.length > 0" class="mt-4 space-y-2">
+                <li
+                    v-for="(file, idx) in invoiceFiles"
+                    :key="file.name"
+                    class="flex items-center justify-between gap-3 rounded-lg border border-gray-200 dark:border-[#191e3a] px-4 py-2 text-sm"
+                >
+                    <div class="flex items-center gap-2 min-w-0">
+                        <svg class="w-4 h-4 text-primary flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span class="truncate dark:text-white-light">{{ file.name }}</span>
+                        <span class="text-white-dark flex-none">({{ (file.size / 1024).toFixed(1) }} KB)</span>
+                    </div>
+                    <button type="button" @click="removeFile(idx)" class="text-danger hover:text-danger/70 flex-none text-lg leading-none">✕</button>
+                </li>
+            </ul>
+        </div>
+
         <!-- Sticky Bottom Bar -->
         <div class="sticky bottom-0 bg-white dark:bg-[#0e1726] border-t dark:border-[#191e3a] shadow-[0_-5px_15px_-5px_rgba(0,0,0,0.1)] p-4 z-10 -mx-6 px-10">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -307,10 +348,10 @@
     import { useAuthStore } from '@/stores/auth';
     import Swal from 'sweetalert2';
 
-    useHead({ title: 'New Factoring Request - IFS Finance' });
+    useHead({ title: 'New Factoring Request - NEX Finance' });
     definePageMeta({ layout: 'default' });
 
-    const { form, pendingInvoices, pendingPOs, activeItems, isLoadingInvoice, isLoadingPO, invoiceError, poError, totalSelectedAmount, selectedBuyerNames, selectedInvoiceRefs, isFormValid, saveDraft, submitRequest } = useSupplierFactoringRequest();
+    const { form, invoiceFiles, addFiles, removeFile, pendingInvoices, pendingPOs, activeItems, isLoadingInvoice, isLoadingPO, invoiceError, poError, totalSelectedAmount, selectedBuyerNames, selectedInvoiceRefs, isFormValid, saveDraft, submitRequest } = useSupplierFactoringRequest();
 
     const authStore = useAuthStore();
     const lastSaved = ref('');
