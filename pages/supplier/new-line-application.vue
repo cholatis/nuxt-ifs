@@ -162,7 +162,7 @@
     definePageMeta({ layout: 'default' });
 
     const route = useRoute();
-    const { application, uploadProgress, isFormValid, isSaved, loadDraft, saveDraft, submitApplication, handleFileUpload } = useSupplierLineApplication();
+    const { application, uploadProgress, isFormValid, loadDraft, saveDraft, submitApplication, handleFileUpload } = useSupplierLineApplication();
 
     const lastSaved      = ref('');
     const isLoadingDraft = ref(false);
