@@ -55,6 +55,61 @@
                     </div>
                 </div>
 
+                <div>
+                    <label class="mb-1 block text-sm font-semibold">เลขนิติบุคคล / Tax ID</label>
+                    <input v-model.trim="form.tax_id" type="text" class="form-input" maxlength="13" placeholder="13 หลัก (ถ้ามี)" />
+                </div>
+
+                <div>
+                    <label class="mb-1 block text-sm font-semibold">ตำแหน่ง</label>
+                    <input v-model.trim="form.position" type="text" class="form-input" maxlength="255" placeholder="ตำแหน่งงาน (ถ้ามี)" />
+                </div>
+
+                <!-- Supplier mapping (optional) -->
+                <div class="md:col-span-2">
+                    <label class="mb-1 block text-sm font-semibold">Supplier <span class="text-white-dark font-normal">(optional)</span></label>
+                    <div class="relative">
+                        <input
+                            v-model="supplierSearch"
+                            @input="onSupplierSearch"
+                            @focus="onSupplierFocus"
+                            @blur="onSupplierBlur"
+                            type="text"
+                            class="form-input"
+                            placeholder="ค้นหา Supplier Code หรือชื่อ…"
+                            autocomplete="off"
+                        />
+                        <div v-if="showSupplierDropdown && supplierOptions.length > 0"
+                            class="absolute z-20 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-xl dark:border-[#191e3a] dark:bg-[#1b2e4b] max-h-56 overflow-y-auto">
+                            <button
+                                v-for="s in supplierOptions"
+                                :key="s.supplier_code"
+                                @mousedown.prevent="selectSupplier(s)"
+                                :class="[
+                                    'flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors',
+                                    selectedSupplier?.supplier_code === s.supplier_code
+                                        ? 'bg-primary/10'
+                                        : 'hover:bg-gray-50 dark:hover:bg-white/5',
+                                ]"
+                                type="button"
+                            >
+                                <span class="badge bg-primary/20 text-primary font-mono text-xs shrink-0 min-w-[52px] text-center">{{ s.supplier_code }}</span>
+                                <span class="text-sm text-dark dark:text-white truncate">{{ s.supplier_name }}</span>
+                            </button>
+                        </div>
+                        <div v-if="isLoadingSuppliers" class="absolute right-3 top-1/2 -translate-y-1/2">
+                            <span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-primary border-l-transparent"></span>
+                        </div>
+                    </div>
+                    <div v-if="selectedSupplier" class="mt-2 flex items-center gap-3 rounded-lg bg-primary/5 border border-primary/20 px-3 py-2.5">
+                        <span class="badge bg-primary/20 text-primary font-mono text-xs shrink-0">{{ selectedSupplier.supplier_code }}</span>
+                        <span class="text-sm font-semibold text-dark dark:text-white truncate flex-1">{{ selectedSupplier.supplier_name }}</span>
+                        <button @click="clearSupplier" type="button" class="text-white-dark hover:text-danger transition-colors shrink-0" title="ล้างการเลือก">
+                            <icon-x class="h-4 w-4" />
+                        </button>
+                    </div>
+                </div>
+
                 <div class="md:col-span-2 mt-2 flex justify-end gap-3">
                     <NuxtLink to="/gec/contacts" class="btn btn-outline-secondary">Cancel</NuxtLink>
                     <button type="submit" class="btn btn-primary" :disabled="isSaving">
@@ -79,12 +134,14 @@ import {
 } from '@/composables/useContact';
 import { useAuthStore } from '@/stores/auth';
 
-useHead({ title: 'New Contact - IFS Finance' });
+useHead({ title: 'New Contact - NEX Finance' });
 definePageMeta({ layout: 'default' });
 
 const authStore = useAuthStore();
 const router = useRouter();
 const { createContact } = useContact();
+
+const LISTSUPPLIERS_URL = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/listsuppliers';
 
 const form = reactive({
     name: '',
@@ -92,6 +149,8 @@ const form = reactive({
     email: '',
     phone: '',
     status: 'lead' as ContactStatus,
+    tax_id: '',
+    position: '',
 });
 
 const phoneAllowed = helpers.regex(/^[\d+\-()\s]*$/);
@@ -106,6 +165,65 @@ const v$ = useVuelidate(rules, form);
 const isSaving = ref(false);
 const errorMessage = ref('');
 
+// ── Supplier search ───────────────────────────────────────────
+const supplierSearch       = ref('');
+const supplierOptions      = ref<any[]>([]);
+const selectedSupplier     = ref<any>(null);
+const showSupplierDropdown = ref(false);
+const isLoadingSuppliers   = ref(false);
+let   supplierDebounce: ReturnType<typeof setTimeout> | null = null;
+
+const fetchSupplierOptions = async (search: string) => {
+    isLoadingSuppliers.value = true;
+    try {
+        const params = new URLSearchParams({ limit: '50' });
+        if (search) params.set('search', search);
+        const res  = await fetch(`${LISTSUPPLIERS_URL}?${params.toString()}`);
+        const data = await res.json();
+        supplierOptions.value = data.data ?? [];
+    } catch (err: any) {
+        console.error('[listsuppliers]', err.message);
+    } finally {
+        isLoadingSuppliers.value = false;
+    }
+};
+
+const onSupplierSearch = () => {
+    selectedSupplier.value     = null;
+    showSupplierDropdown.value = true;
+    if (supplierDebounce) clearTimeout(supplierDebounce);
+    supplierDebounce = setTimeout(async () => {
+        await fetchSupplierOptions(supplierSearch.value.trim());
+        showSupplierDropdown.value = supplierOptions.value.length > 0;
+    }, 300);
+};
+
+const onSupplierFocus = () => {
+    if (supplierOptions.value.length > 0) {
+        showSupplierDropdown.value = true;
+    } else if (!isLoadingSuppliers.value) {
+        fetchSupplierOptions(supplierSearch.value.trim()).then(() => {
+            showSupplierDropdown.value = supplierOptions.value.length > 0;
+        });
+    }
+};
+
+const onSupplierBlur = () => {
+    setTimeout(() => { showSupplierDropdown.value = false; }, 200);
+};
+
+const selectSupplier = (s: any) => {
+    selectedSupplier.value     = s;
+    supplierSearch.value       = '';
+    showSupplierDropdown.value = false;
+};
+
+const clearSupplier = () => {
+    selectedSupplier.value     = null;
+    supplierSearch.value       = '';
+    showSupplierDropdown.value = false;
+};
+
 const onSubmit = async () => {
     errorMessage.value = '';
     const ok = await v$.value.$validate();
@@ -119,6 +237,10 @@ const onSubmit = async () => {
             email: form.email || null,
             phone: form.phone || null,
             status: form.status,
+            supplier_code: selectedSupplier.value?.supplier_code ?? null,
+            supplier_name: selectedSupplier.value?.supplier_name ?? null,
+            tax_id: form.tax_id || null,
+            position: form.position || null,
         });
         router.push('/gec/contacts');
     } catch (err: any) {

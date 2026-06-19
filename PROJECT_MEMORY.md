@@ -1,4 +1,4 @@
-# IFS Finance — Project Memory
+# NEX Finance — Project Memory
 > สรุป context ทั้งหมดของโปรเจกต์ สำหรับใช้ต่อใน session ถัดไป
 > Last updated: 2026-05-05
 

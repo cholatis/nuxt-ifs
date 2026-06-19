@@ -171,9 +171,12 @@
                                 รายละเอียด Consent <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <quillEditor
-                                    v-model:value="form.consent_detail"
-                                    :options="quillOptions"
+                                <QuillEditor
+                                    :key="quillKey"
+                                    v-model:content="form.consent_detail"
+                                    content-type="html"
+                                    theme="snow"
+                                    :toolbar="quillToolbar"
                                     style="min-height: 240px"
                                 />
                             </client-only>
@@ -253,11 +256,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue';
-import { quillEditor } from 'vue3-quill';
-import 'vue3-quill/lib/vue3-quill.css';
+import { ref, computed, onMounted, nextTick } from 'vue';
+import { QuillEditor } from '@vueup/vue-quill';
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
-useHead({ title: 'จัดการ Consent — IFS Finance' });
+useHead({ title: 'จัดการ Consent — NEX Finance' });
 definePageMeta({ layout: 'default' });
 
 const CONSENT_URL = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/consent';
@@ -294,21 +297,18 @@ const isDeleting      = ref(false);
 // Toggle active
 const togglingId = ref<string | null>(null);
 
-// Quill options
-const quillOptions = ref({
-    modules: {
-        toolbar: [
-            [{ header: [1, 2, 3, false] }],
-            ['bold', 'italic', 'underline'],
-            [{ list: 'ordered' }, { list: 'bullet' }],
-            [{ indent: '-1' }, { indent: '+1' }],
-            ['link'],
-            ['clean'],
-        ],
-    },
-    placeholder: 'พิมพ์รายละเอียด Consent ที่นี่...',
-    theme: 'snow',
-});
+// Force Quill remount after data is ready
+const quillKey = ref(0);
+
+// Quill toolbar config
+const quillToolbar = [
+    [{ header: [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    [{ indent: '-1' }, { indent: '+1' }],
+    ['link'],
+    ['clean'],
+];
 
 // ── Computed ───────────────────────────────────────────────────────
 const filteredConsents = computed(() => {
@@ -411,15 +411,17 @@ const deleteConsent = async () => {
 };
 
 // ── Modal helpers ──────────────────────────────────────────────────
-const openCreate = () => {
+const openCreate = async () => {
     isEditing.value   = false;
     editingId.value   = null;
     modalError.value  = '';
     form.value = { consent_type: '', consent_detail: '', consent_version: '1.0', is_active: false };
     showModal.value = true;
+    await nextTick();
+    quillKey.value++;
 };
 
-const openEdit = (item: any) => {
+const openEdit = async (item: any) => {
     isEditing.value        = true;
     editingId.value        = item.id;
     modalError.value       = '';
@@ -430,6 +432,8 @@ const openEdit = (item: any) => {
         is_active      : item.is_active,
     };
     showModal.value = true;
+    await nextTick();
+    quillKey.value++;
 };
 
 const openPreview = (item: any) => {

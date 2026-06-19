@@ -108,7 +108,7 @@ import {
 import { useContact, type Contact } from '@/composables/useContact';
 import { useAuthStore } from '@/stores/auth';
 
-useHead({ title: 'New Activity - IFS Finance' });
+useHead({ title: 'New Activity - NEX Finance' });
 definePageMeta({ layout: 'default' });
 
 const route = useRoute();

@@ -111,6 +111,15 @@ Deno.serve(async (req: Request) => {
 
         const userId = inviteData.user.id;
 
+        // ── 7b. Set app_metadata.role so RLS policies work ──────────
+        const { error: roleErr } = await adminClient.auth.admin.updateUserById(userId, {
+            app_metadata: { role: 'supplier' },
+        });
+        if (roleErr) {
+            await adminClient.auth.admin.deleteUser(userId);
+            return json({ error: `Failed to set user role: ${roleErr.message}` }, 500);
+        }
+
         // ── 8. UPSERT profiles (trigger อาจสร้างก่อนแล้ว) ────────
         const { error: profileInsertErr } = await adminClient
             .from('profiles')

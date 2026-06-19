@@ -72,7 +72,7 @@
                                 <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">ตั้งรหัสผ่าน</h1>
                                 <p class="text-base font-bold leading-normal text-white-dark">
                                     ยินดีต้อนรับ <span class="text-primary">{{ userEmail }}</span><br/>
-                                    กรุณาตั้งรหัสผ่านสำหรับเข้าสู่ระบบ IFS Finance
+                                    กรุณาตั้งรหัสผ่านสำหรับเข้าสู่ระบบ NEX Finance
                                 </p>
                             </div>
 
@@ -188,7 +188,7 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
 
-useHead({ title: 'ตั้งรหัสผ่าน - IFS Finance' });
+useHead({ title: 'ตั้งรหัสผ่าน - NEX Finance' });
 definePageMeta({ layout: 'auth' });
 
 const { $supabase } = useNuxtApp();
@@ -252,13 +252,13 @@ onMounted(async () => {
     const tokenHash    = queryParams.get('token');
     const tokenType    = queryParams.get('type');
 
-    if (tokenHash && tokenType === 'recovery') {
+    if (tokenHash && (tokenType === 'recovery' || tokenType === 'invite')) {
         // Clean URL immediately
         window.history.replaceState(null, '', window.location.pathname);
 
         const { data, error: otpErr } = await ($supabase as any).auth.verifyOtp({
             token_hash: tokenHash,
-            type      : 'recovery',
+            type      : tokenType as 'recovery' | 'invite',
         });
 
         if (otpErr || !data.session) {

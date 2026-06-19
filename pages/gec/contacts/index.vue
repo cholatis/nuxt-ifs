@@ -36,15 +36,21 @@
             </div>
         </div>
 
+        <!-- Success / Error banners -->
+        <div v-if="successMessage" class="mb-4 rounded-md border border-success/40 bg-success/10 p-3 text-sm text-success flex items-center justify-between">
+            <span>{{ successMessage }}</span>
+            <button @click="successMessage = ''" class="ml-4 text-success/70 hover:text-success">×</button>
+        </div>
+        <div v-if="errorMessage && !isLoading" class="mb-4 rounded-md border border-danger/40 bg-danger/10 p-3 text-sm text-danger flex items-center justify-between">
+            <span>{{ errorMessage }}</span>
+            <button @click="errorMessage = ''" class="ml-4 text-danger/70 hover:text-danger">×</button>
+        </div>
+
         <!-- Table -->
         <div class="panel">
             <div v-if="isLoading" class="flex items-center justify-center py-20">
                 <span class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary border-l-transparent"></span>
                 <span class="ml-3 text-white-dark">Loading…</span>
-            </div>
-
-            <div v-else-if="errorMessage" class="panel border border-danger/40 bg-danger/10 py-10 text-center text-danger">
-                {{ errorMessage }}
             </div>
 
             <div v-else-if="contacts.length === 0" class="py-16 text-center">
@@ -61,6 +67,7 @@
                         <tr>
                             <th>Name</th>
                             <th>Company</th>
+                            <th>Supplier</th>
                             <th>Email</th>
                             <th>Phone</th>
                             <th class="text-center">Status</th>
@@ -72,6 +79,13 @@
                         <tr v-for="c in contacts" :key="c.id">
                             <td class="font-semibold text-primary">{{ c.name }}</td>
                             <td>{{ c.company_name || '-' }}</td>
+                            <td>
+                                <div v-if="c.supplier_code" class="flex items-center gap-2">
+                                    <span class="badge bg-primary/20 text-primary font-mono text-xs shrink-0">{{ c.supplier_code }}</span>
+                                    <span class="text-sm truncate max-w-[140px]">{{ c.supplier_name }}</span>
+                                </div>
+                                <span v-else class="text-white-dark">-</span>
+                            </td>
                             <td class="text-sm">{{ c.email || '-' }}</td>
                             <td class="text-sm">{{ c.phone || '-' }}</td>
                             <td class="text-center">
@@ -92,6 +106,24 @@
                                         <icon-notes class="h-4 w-4" />
                                         Activities
                                     </button>
+                                    <button
+                                        v-if="c.status === 'customer' && !c.linked_user_id"
+                                        @click="handleCreateAccount(c)"
+                                        class="btn btn-outline-success btn-sm gap-1 px-3"
+                                        :disabled="createAccountLoading === c.id"
+                                        title="ส่ง invite email เพื่อสร้าง login account"
+                                    >
+                                        <span v-if="createAccountLoading === c.id" class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-success border-l-transparent"></span>
+                                        <icon-user-plus v-else class="h-4 w-4" />
+                                        สร้าง Account
+                                    </button>
+                                    <span
+                                        v-if="c.linked_user_id"
+                                        class="badge badge-outline-success text-xs px-2 py-1"
+                                        title="มี Account แล้ว"
+                                    >
+                                        ✓ Account
+                                    </span>
                                     <button
                                         v-if="c.status === 'lead'"
                                         @click="openDeleteModal(c)"
@@ -181,17 +213,19 @@ import {
 } from '@/composables/useContact';
 import { useAuthStore } from '@/stores/auth';
 
-useHead({ title: 'Contacts - IFS Finance' });
+useHead({ title: 'Contacts - NEX Finance' });
 definePageMeta({ layout: 'default' });
 
 const authStore = useAuthStore();
 const router = useRouter();
-const { listContacts, deleteContact } = useContact();
+const { listContacts, deleteContact, createAccount } = useContact();
 
 const contacts = ref<Contact[]>([]);
 const isLoading = ref(false);
 const errorMessage = ref('');
+const successMessage = ref('');
 const actionLoading = ref<number | null>(null);
+const createAccountLoading = ref<number | null>(null);
 
 const searchText = ref('');
 const filterStatus = ref<'all' | ContactStatus>('all');
@@ -286,6 +320,21 @@ const confirmDelete = async () => {
         errorMessage.value = err?.message || 'Failed to delete contact';
     } finally {
         actionLoading.value = null;
+    }
+};
+
+const handleCreateAccount = async (c: Contact) => {
+    createAccountLoading.value = c.id;
+    errorMessage.value = '';
+    successMessage.value = '';
+    try {
+        await createAccount(c.id);
+        successMessage.value = `ส่ง invite email ไปยัง ${c.email} เรียบร้อยแล้ว`;
+        await fetchContacts();
+    } catch (err: any) {
+        errorMessage.value = err?.message || 'ไม่สามารถสร้าง Account ได้';
+    } finally {
+        createAccountLoading.value = null;
     }
 };
 

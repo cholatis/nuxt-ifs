@@ -145,7 +145,7 @@
     import { useAuthStore } from '@/stores/auth';
     import Swal from 'sweetalert2';
 
-    useHead({ title: 'PO List - IFS Finance' });
+    useHead({ title: 'PO List - NEX Finance' });
     definePageMeta({ layout: 'default' });
 
     const LISTALLPO_URL = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/listallpo';

@@ -11,6 +11,14 @@ export interface Contact {
     status: ContactStatus;
     owner_user_id: string | null;
     last_contacted_at: string | null;
+    supplier_code: string | null;
+    supplier_name: string | null;
+    title: string | null;
+    tax_id: string | null;
+    position: string | null;
+    message: string | null;
+    source: 'manual' | 'register_form';
+    linked_user_id: string | null;
     created_at: string;
     updated_at: string;
 }
@@ -23,6 +31,13 @@ export interface ContactCreate {
     status?: ContactStatus;
     owner_user_id?: string | null;
     last_contacted_at?: string | null;
+    supplier_code?: string | null;
+    supplier_name?: string | null;
+    title?: string | null;
+    tax_id?: string | null;
+    position?: string | null;
+    message?: string | null;
+    source?: 'manual' | 'register_form';
 }
 
 export type ContactUpdate = Partial<ContactCreate>;
@@ -129,5 +144,27 @@ export const useContact = () => {
         await callEdge<{ id: string }>(`/${id}`, { method: 'DELETE' });
     };
 
-    return { listContacts, getContact, createContact, updateContact, deleteContact };
+    const createAccount = async (contactId: number | string): Promise<{ user_id: string; email: string }> => {
+        const config = useRuntimeConfig();
+        const jwt = await getJwt();
+        if (!jwt) throw new Error('No active session');
+        const res = await fetch(`${config.public.supabaseUrl}/functions/v1/create-account`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${jwt}`,
+            },
+            body: JSON.stringify({ contact_id: contactId }),
+        });
+        const text = await res.text();
+        const json = text ? JSON.parse(text) : {};
+        if (!res.ok) {
+            const err: any = new Error(json.error || `HTTP ${res.status}`);
+            err.status = res.status;
+            throw err;
+        }
+        return json;
+    };
+
+    return { listContacts, getContact, createContact, updateContact, deleteContact, createAccount };
 };

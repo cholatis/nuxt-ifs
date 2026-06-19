@@ -137,7 +137,7 @@
     import { ref, computed, onMounted } from 'vue';
     import { useAuthStore } from '@/stores/auth';
 
-    useHead({ title: 'ตั้งรหัสผ่านใหม่ - IFS Finance' });
+    useHead({ title: 'ตั้งรหัสผ่านใหม่ - NEX Finance' });
     definePageMeta({ layout: 'auth-layout' });
 
     const { $supabase } = useNuxtApp();
@@ -224,12 +224,16 @@
 
             if (updateErr) throw new Error(updateErr.message);
 
-            // 2. Update profiles.must_change_password = false
+            // 2. Update profiles — clear must_change_password; activate if still pending (invite flow)
             const userId = updateData?.user?.id;
             if (userId) {
+                const currentStatus = authStore.profile?.status;
                 await ($supabase as any)
                     .from('profiles')
-                    .update({ must_change_password: false })
+                    .update({
+                        must_change_password: false,
+                        ...(currentStatus === 'pending' ? { status: 'active' } : {}),
+                    })
                     .eq('id', userId);
             }
 

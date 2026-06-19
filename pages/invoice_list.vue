@@ -149,7 +149,7 @@
     import { useAuthStore } from '@/stores/auth';
     import Swal from 'sweetalert2';
 
-    useHead({ title: 'Invoice List - IFS Finance' });
+    useHead({ title: 'Invoice List - NEX Finance' });
     definePageMeta({ layout: 'default' });
 
     const LISTINVOICES_URL = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/listinvoices';

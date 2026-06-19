@@ -280,7 +280,7 @@
     import { useAuthStore } from '@/stores/auth';
     import Swal from 'sweetalert2';
 
-    useHead({ title: 'Edit Request - IFS Finance' });
+    useHead({ title: 'Edit Request - NEX Finance' });
     definePageMeta({ layout: 'default' });
 
     const GET_URL      = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/getapplication';

@@ -254,7 +254,7 @@
     import { useAuthStore } from '@/stores/auth';
     import Swal from 'sweetalert2';
 
-    useHead({ title: 'Profile List - IFS Finance (GEC)' });
+    useHead({ title: 'Profile List - NEX Finance (GEC)' });
     definePageMeta({ layout: 'default' });
 
     const authStore = useAuthStore();

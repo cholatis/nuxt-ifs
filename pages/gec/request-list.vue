@@ -210,7 +210,7 @@
     import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
     import { useAuthStore } from '@/stores/auth';
 
-    useHead({ title: 'Request List - IFS Finance (GEC)' });
+    useHead({ title: 'Request List - NEX Finance (GEC)' });
     definePageMeta({ layout: 'default' });
 
     const LIST_URL   = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/listapplication';

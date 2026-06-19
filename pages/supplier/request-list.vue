@@ -285,7 +285,7 @@
     import { useAuthStore } from '@/stores/auth';
     import { useAuth } from '@/composables/useAuth';
 
-    useHead({ title: 'My Requests - IFS Finance' });
+    useHead({ title: 'My Requests - NEX Finance' });
     definePageMeta({ layout: 'default' });
 
     const authStore = useAuthStore();

@@ -18,7 +18,7 @@
                 
                 <h2 class="text-4xl font-black leading-tight mb-4 text-primary">บัญชีอยู่ระหว่างรอการอนุมัติ</h2>
                 <p class="text-lg font-medium opacity-80 mb-8 max-w-[600px] mx-auto text-white-dark">
-                    ขอบคุณที่ลงทะเบียนกับ IFS Finance System บัญชีของคุณ ({{ currentUser?.email }}) กำลังอยู่ระหว่างการตรวจสอบและอนุมัติโดยผู้ดูแลระบบ 
+                    ขอบคุณที่ลงทะเบียนกับ NEX Finance System บัญชีของคุณ ({{ currentUser?.email }}) กำลังอยู่ระหว่างการตรวจสอบและอนุมัติโดยผู้ดูแลระบบ 
                     <br/><br/>
                     คุณจะสามารถเข้าใช้งานระบบได้หลังจากได้รับการอนุมัติแล้ว หากมีข้อสงสัยกรุณาติดต่อเจ้าหน้าที่
                 </p>
@@ -45,7 +45,7 @@
         layout: 'auth-layout',
     });
 
-    useHead({ title: 'Account Pending — IFS Finance System' });
+    useHead({ title: 'Account Pending — NEX Finance System' });
 
     const { currentUser, logout, isLoading } = useAuth();
 

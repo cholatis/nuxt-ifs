@@ -17,7 +17,7 @@
                         <NuxtLink to="/" class="mb-10 block">
                             <img src="/assets/images/auth/logo-white.svg" alt="Logo" class="w-16" />
                         </NuxtLink>
-                        <h2 class="text-4xl font-black leading-tight mb-4">IFS Finance System</h2>
+                        <h2 class="text-4xl font-black leading-tight mb-4">NEX Finance System</h2>
                         <p class="text-lg font-medium opacity-80 mb-8">เข้าสู่ระบบเพื่อจัดการสินเชื่อแฟคตอริ่งและข้อมูลธุรกิจของคุณ</p>
                         <div class="mt-auto">
                             <img src="/assets/images/auth/login.svg" alt="Illustration" class="w-full max-w-[430px] mx-auto" />
@@ -77,7 +77,7 @@
                         </div>
                     </div>
                     <div class="mt-auto text-center text-xs text-white-dark">
-                        &copy; {{ new Date().getFullYear() }} IFS Finance System. All rights reserved.
+                        &copy; {{ new Date().getFullYear() }} NEX Finance System. All rights reserved.
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@
         layout: 'auth-layout',
     });
 
-    useHead({ title: 'Login — IFS Finance System' });
+    useHead({ title: 'Login — NEX Finance System' });
 
     const { login, isLoading, error } = useAuth();
     const email = ref('');

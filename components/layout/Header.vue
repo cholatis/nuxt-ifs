@@ -221,7 +221,7 @@
                                 >
                                     <icon-bell-bing />
 
-                                    <span class="absolute top-0 flex h-3 w-3 ltr:right-0 rtl:left-0">
+                                    <span v-if="unreadCount > 0" class="absolute top-0 flex h-3 w-3 ltr:right-0 rtl:left-0">
                                         <span
                                             class="absolute -top-[3px] inline-flex h-full w-full animate-ping rounded-full bg-success/50 opacity-75 ltr:-left-[3px] rtl:-right-[3px]"
                                         ></span>
@@ -232,55 +232,47 @@
                                     <ul class="w-[300px] divide-y !py-0 text-dark dark:divide-white/10 dark:text-white-dark sm:w-[350px]">
                                         <li>
                                             <div class="flex items-center justify-between px-4 py-2 font-semibold">
-                                                <h4 class="text-lg">Notification</h4>
-                                                <template v-if="notifications.length">
-                                                    <span class="badge bg-primary/80" v-text="notifications.length + 'New'"></span>
-                                                </template>
+                                                <h4 class="text-lg">การแจ้งเตือน</h4>
+                                                <span v-if="unreadCount > 0" class="badge bg-primary/80">{{ unreadCount }} ใหม่</span>
                                             </div>
                                         </li>
-                                        <template v-for="notification in notifications" :key="notification.id">
-                                            <li class="dark:text-white-light/90">
-                                                <div class="group flex items-center px-4 py-2">
-                                                    <div class="grid place-content-center rounded">
-                                                        <div class="relative h-12 w-12">
-                                                            <img
-                                                                class="h-12 w-12 rounded-full object-cover"
-                                                                :src="`/assets/images/${notification.profile}`"
-                                                                alt=""
-                                                            />
-                                                            <span class="absolute bottom-0 right-[6px] block h-2 w-2 rounded-full bg-success"></span>
-                                                        </div>
+                                        <template v-for="n in notifications" :key="n.id">
+                                            <li :class="['cursor-pointer transition-colors', !n.is_read ? 'bg-primary/5 dark:bg-primary/10' : 'hover:bg-gray-50 dark:hover:bg-white/5']">
+                                                <div class="flex items-center gap-3 px-4 py-2.5" @click="handleNotifClick(n, close)">
+                                                    <div :class="['flex h-10 w-10 shrink-0 items-center justify-center rounded-full', n.type === 'success' ? 'bg-success/15 text-success' : n.type === 'warning' ? 'bg-warning/15 text-warning' : n.type === 'danger' ? 'bg-danger/15 text-danger' : 'bg-primary/15 text-primary']">
+                                                        <icon-bell class="h-5 w-5" />
                                                     </div>
-                                                    <div class="flex flex-auto ltr:pl-3 rtl:pr-3">
-                                                        <div class="ltr:pr-3 rtl:pl-3">
-                                                            <h6 v-html="notification.message"></h6>
-                                                            <span class="block text-xs font-normal dark:text-gray-500" v-text="notification.time"></span>
-                                                        </div>
-                                                        <button
-                                                            type="button"
-                                                            class="text-neutral-300 opacity-0 hover:text-danger group-hover:opacity-100 ltr:ml-auto rtl:mr-auto"
-                                                            @click="removeNotification(notification.id)"
-                                                        >
-                                                            <icon-x-circle />
-                                                        </button>
+                                                    <div class="min-w-0 flex-1">
+                                                        <p class="truncate text-sm font-semibold leading-tight" :class="!n.is_read ? 'text-dark dark:text-white' : 'text-dark/70 dark:text-white/70'">{{ n.title }}</p>
+                                                        <p v-if="n.body" class="mt-0.5 truncate text-xs text-white-dark">{{ n.body }}</p>
+                                                        <span class="mt-1 block text-xs text-white-dark/60">{{ formatNotifTime(n.created_at) }}</span>
                                                     </div>
+                                                    <span v-if="!n.is_read" class="h-2 w-2 shrink-0 rounded-full bg-primary"></span>
+                                                    <button
+                                                        type="button"
+                                                        class="shrink-0 text-white-dark/40 transition-colors hover:text-danger"
+                                                        title="ทำเครื่องหมายว่าอ่านแล้ว"
+                                                        @click.stop="markRead(n.id)"
+                                                    >
+                                                        <icon-x-circle class="h-4 w-4" />
+                                                    </button>
                                                 </div>
                                             </li>
                                         </template>
-                                        <template v-if="notifications.length">
+                                        <template v-if="notifications.length > 0">
                                             <li>
                                                 <div class="p-4">
-                                                    <button class="btn btn-primary btn-small block w-full" @click="close()">Read All Notifications</button>
+                                                    <button class="btn btn-primary btn-small block w-full" @click="markAllRead(); close()">อ่านทั้งหมด</button>
                                                 </div>
                                             </li>
                                         </template>
-                                        <template v-if="!notifications.length">
+                                        <template v-if="notifications.length === 0">
                                             <li>
                                                 <div class="!grid min-h-[200px] place-content-center text-lg hover:!bg-transparent">
                                                     <div class="mx-auto mb-4 rounded-full text-primary ring-4 ring-primary/30">
                                                         <icon-info-circle :fill="true" class="h-10 w-10" />
                                                     </div>
-                                                    No data available.
+                                                    ไม่มีการแจ้งเตือน
                                                 </div>
                                             </li>
                                         </template>
@@ -893,26 +885,8 @@
         return `/assets/images/flags/${store.locale?.toUpperCase()}.svg`;
     });
 
-    const notifications = ref([
-        {
-            id: 1,
-            profile: 'user-profile.jpeg',
-            message: '<strong class="text-sm mr-1">John Doe</strong>invite you to <strong>Prototyping</strong>',
-            time: '45 min ago',
-        },
-        {
-            id: 2,
-            profile: 'profile-34.jpeg',
-            message: '<strong class="text-sm mr-1">Adam Nolan</strong>mentioned you to <strong>UX Basics</strong>',
-            time: '9h Ago',
-        },
-        {
-            id: 3,
-            profile: 'profile-16.jpeg',
-            message: '<strong class="text-sm mr-1">Anna Morgan</strong>Upload a file',
-            time: '9h Ago',
-        },
-    ]);
+    const router = useRouter();
+    const { items: notifications, unreadCount, init: initNotifications, markRead, markAllRead, formatTime: formatNotifTime } = useNotification();
 
     const messages = ref([
         {
@@ -947,6 +921,7 @@
 
     onMounted(() => {
         setActiveDropdown();
+        initNotifications();
     });
 
     watch(route, (to, from) => {
@@ -974,8 +949,12 @@
         }
     };
 
-    const removeNotification = (value: number) => {
-        notifications.value = notifications.value.filter((d) => d.id !== value);
+    const handleNotifClick = async (n: any, close: () => void) => {
+        await markRead(n.id);
+        if (n.link) {
+            router.push(n.link);
+            close();
+        }
     };
 
     const removeMessage = (value: number) => {

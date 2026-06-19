@@ -22,7 +22,7 @@
                     ></div>
                     <div class="ltr:xl:-skew-x-[14deg] rtl:xl:skew-x-[14deg]">
                         <div class="ms-10 block">
-                            <h2 class="text-4xl font-extrabold text-white">IFS Finance</h2>
+                            <h2 class="text-4xl font-extrabold text-white">NEX Finance</h2>
                             <p class="mt-2 text-lg text-white/80">Supply Chain Finance System</p>
                         </div>
                         <div class="mt-24 hidden w-full max-w-[430px] lg:block">
@@ -75,7 +75,7 @@
                     <div class="w-full max-w-[440px] lg:mt-16">
                         <div class="mb-10">
                             <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign In</h1>
-                            <p class="text-base font-bold leading-normal text-white-dark">เข้าสู่ระบบ IFS Finance System</p>
+                            <p class="text-base font-bold leading-normal text-white-dark">เข้าสู่ระบบ NEX Finance System</p>
                         </div>
 
                         <!-- Error message -->
@@ -136,7 +136,7 @@
                             </NuxtLink>
                         </div>
                     </div>
-                    <p class="absolute bottom-6 w-full text-center dark:text-white">© {{ new Date().getFullYear() }} IFS Finance System. All Rights Reserved.</p>
+                    <p class="absolute bottom-6 w-full text-center dark:text-white">© {{ new Date().getFullYear() }} NEX Finance System. All Rights Reserved.</p>
                 </div>
             </div>
         </div>
@@ -149,7 +149,7 @@
     import { useAppStore } from '@/stores/index';
     import { useAuth } from '@/composables/useAuth';
 
-    useHead({ title: 'Login - IFS Finance System' });
+    useHead({ title: 'Login - NEX Finance System' });
     definePageMeta({ layout: 'auth-layout' });
 
     const store = useAppStore();

@@ -157,7 +157,6 @@
                                         </button>
                                         <vue-collapsible :isOpen="activeDropdown === 'user_management'">
                                             <ul class="sub-menu text-gray-500">
-                                                <li><NuxtLink to="/gec/registration-list" @click="toggleMobileMenu">{{ $t('registration_list') }}</NuxtLink></li>
                                                 <li><NuxtLink to="/gec/profile-list" @click="toggleMobileMenu">Profile List</NuxtLink></li>
                                             </ul>
                                         </vue-collapsible>

@@ -514,7 +514,7 @@
     import { useAuthStore } from '@/stores/auth';
     import Swal from 'sweetalert2';
 
-    useHead({ title: 'View Request - IFS Finance (GEC)' });
+    useHead({ title: 'View Request - NEX Finance (GEC)' });
     definePageMeta({ layout: 'default' });
 
     const GET_URL       = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/getapplication';

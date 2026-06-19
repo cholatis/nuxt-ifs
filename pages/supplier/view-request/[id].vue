@@ -412,7 +412,7 @@
     import { ref, computed, onMounted } from 'vue';
     import { useAuthStore } from '@/stores/auth';
 
-    useHead({ title: 'View Request - IFS Finance' });
+    useHead({ title: 'View Request - NEX Finance' });
     definePageMeta({ layout: 'default' });
 
     const GET_URL   = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/getapplication';

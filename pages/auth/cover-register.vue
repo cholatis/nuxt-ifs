@@ -15,7 +15,7 @@
                     <div class="absolute inset-y-0 w-8 from-primary/10 via-transparent to-transparent ltr:-right-10 ltr:bg-gradient-to-r rtl:-left-10 rtl:bg-gradient-to-l xl:w-16 ltr:xl:-right-20 rtl:xl:-left-20"></div>
                     <div class="ltr:xl:-skew-x-[14deg] rtl:xl:skew-x-[14deg]">
                         <div class="ms-10 block">
-                            <h2 class="text-4xl font-extrabold text-white">IFS Finance</h2>
+                            <h2 class="text-4xl font-extrabold text-white">NEX Finance</h2>
                             <p class="mt-2 text-lg text-white/80">Supply Chain Finance System</p>
                         </div>
                         <div class="mt-24 hidden w-full max-w-[430px] lg:block">
@@ -25,7 +25,7 @@
                 </div>
 
                 <!-- Right panel -->
-                <div class="relative flex w-full flex-col justify-center gap-6 px-6 pb-16 pt-6 sm:px-10">
+                <div class="relative flex w-full flex-col justify-center gap-3 px-6 pb-6 pt-4 sm:px-10">
                     <!-- Logo (mobile only) -->
                     <div class="flex lg:hidden">
                         <NuxtLink to="/" class="block w-8">
@@ -53,13 +53,13 @@
                     </div>
 
                     <!-- Two-column layout: Form + Contact Info -->
-                    <div v-else class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                    <div v-else class="grid grid-cols-1 gap-4 lg:grid-cols-2">
 
                         <!-- ── Left: Form ── -->
                         <div>
-                            <h2 class="mb-6 text-2xl font-bold text-dark dark:text-white">ติดต่อเรา</h2>
+                            <h2 class="mb-3 text-xl font-bold text-dark dark:text-white">ติดต่อเรา</h2>
 
-                            <form class="space-y-4 dark:text-white" @submit.prevent="handleRegister">
+                            <form class="space-y-3 dark:text-white" @submit.prevent="handleRegister">
 
                                 <!-- คำนำหน้า / ชื่อ / นามสกุล -->
                                 <template v-if="form.title !== 'อื่นๆ'">
@@ -168,7 +168,7 @@
                                     <label class="text-sm font-medium">ข้อความ/คำถาม</label>
                                     <textarea
                                         v-model="form.message"
-                                        rows="4"
+                                        rows="2"
                                         placeholder="บอกเราเกี่ยวกับความต้องการของคุณ..."
                                         class="form-textarea mt-1 placeholder:text-white-dark"
                                         :disabled="isLoading"
@@ -176,7 +176,7 @@
                                 </div>
 
                                 <!-- PDPA Checkbox -->
-                                <div class="rounded-lg border border-[#ebedf2] bg-white/60 p-4 dark:border-[#191e3a] dark:bg-black/20">
+                                <div class="rounded-lg border border-[#ebedf2] bg-white/60 p-3 dark:border-[#191e3a] dark:bg-black/20">
                                     <label class="flex cursor-pointer items-start gap-3">
                                         <input
                                             type="checkbox"
@@ -186,7 +186,7 @@
                                             :disabled="isLoading"
                                         />
                                         <span class="text-sm text-dark dark:text-white">
-                                            ข้าพเจ้ายินยอมให้เก็บรวบรวม ใช้ และเปิดเผยข้อมูลส่วนบุคคลตาม
+                                            ข้าพเจ้าได้อ่าน ทำความเข้าใจ และยอมรับหนังสือรับทราบและให้ความยินยอมเกี่ยวกับการคุ้มครองข้อมูลส่วนบุคคล (PDPA) นโยบายการจัดการข้อมูล (Data Policy) และเงื่อนไขการใช้บริการของ NEX Finance Platform แล้วทุกประการ
                                             <button type="button" class="font-semibold text-primary underline hover:text-primary/80" @click.stop="openPdpaModal">
                                                 นโยบายคุ้มครองข้อมูลส่วนบุคคล (PDPA)
                                             </button>
@@ -201,12 +201,28 @@
                                     </p>
                                 </div>
 
+                                <!-- Data Disclosure Consent Checkbox -->
+                                <div class="rounded-lg border border-[#ebedf2] bg-white/60 p-3 dark:border-[#191e3a] dark:bg-black/20">
+                                    <label class="flex cursor-pointer items-start gap-3">
+                                        <input
+                                            type="checkbox"
+                                            v-model="noaAccepted"
+                                            class="form-checkbox mt-0.5 h-4 w-4 flex-shrink-0"
+                                            :disabled="isLoading"
+                                        />
+                                        <span class="text-sm text-dark dark:text-white">
+                                            ข้าพเจ้ายินยอม ให้ NEX Finance เปิดเผยข้อมูลที่เกี่ยวข้องแก่สถาบันการเงินและพันธมิตรทางธุรกิจเพื่อการพิจารณา และ ให้บริการทางการเงินที่เกี่ยวข้องกับธุรกรรมของข้าพเจ้าและ/หรือบริษัทที่ข้าพเจ้าเป็นผู้แทน
+                                            <span class="text-danger"> *</span>
+                                        </span>
+                                    </label>
+                                </div>
+
                                 <!-- Submit -->
                                 <button
                                     type="submit"
                                     class="btn w-full border-0 py-3 text-base font-bold text-white shadow-[0_10px_20px_-10px_rgba(67,97,238,0.5)] transition-all hover:opacity-90 disabled:opacity-60"
                                     style="background: linear-gradient(90deg, #4361ee 0%, #22c55e 100%)"
-                                    :disabled="isLoading || !pdpaAccepted"
+                                    :disabled="isLoading || !pdpaAccepted || !noaAccepted"
                                 >
                                     <span v-if="isLoading" class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-l-transparent ltr:mr-2 rtl:ml-2"></span>
                                     {{ isLoading ? 'กำลังส่งข้อมูล...' : 'ส่งข้อมูลและนัดหมาย' }}
@@ -223,50 +239,48 @@
 
                         <!-- ── Right: Contact Info ── -->
                         <div class="flex flex-col justify-center">
-                            <h2 class="mb-6 text-2xl font-bold text-dark dark:text-white">ติดต่อโดยตรง</h2>
+                            <h2 class="mb-3 text-xl font-bold text-dark dark:text-white">ติดต่อโดยตรง</h2>
 
-                            <div class="space-y-5">
+                            <div class="space-y-3">
                                 <!-- Phone -->
-                                <div class="flex items-start gap-4">
-                                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/30">
-                                        <svg class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                                        <svg class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                                         </svg>
                                     </div>
                                     <div>
-                                        <p class="font-semibold text-dark dark:text-white">โทรศัพท์</p>
-                                        <p class="text-white-dark">085 872 9728, 02 275 5551</p>
+                                        <p class="text-sm font-semibold text-dark dark:text-white">โทรศัพท์</p>
+                                        <p class="text-sm text-white-dark">085 872 9728, 02 275 5551</p>
                                     </div>
                                 </div>
 
                                 <!-- Email -->
-                                <div class="flex items-start gap-4">
-                                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-100 dark:bg-green-900/30">
-                                        <svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
+                                        <svg class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                         </svg>
                                     </div>
                                     <div>
-                                        <p class="font-semibold text-dark dark:text-white">อีเมล</p>
-                                        <p class="text-white-dark">infoadmin@selfmade.finance</p>
+                                        <p class="text-sm font-semibold text-dark dark:text-white">อีเมล</p>
+                                        <p class="text-sm text-white-dark">NexFinance@gec.co.th</p>
                                     </div>
                                 </div>
 
                                 <!-- Address -->
-                                <div class="flex items-start gap-4">
-                                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-purple-100 dark:bg-purple-900/30">
-                                        <svg class="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                                        <svg class="h-5 w-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         </svg>
                                     </div>
                                     <div>
-                                        <p class="font-semibold text-dark dark:text-white">ที่อยู่</p>
-                                        <p class="text-white-dark leading-relaxed">
-                                            New Paradigm Co., Ltd. (Head Office)<br />
-                                            252/91, Muang Thai-Phatra Complex Building (Tower B),
-                                            16th Floor Room 252/91(H), Ratchadaphisek Road,
-                                            Huaykwang, Bangkok 10310
+                                        <p class="text-sm font-semibold text-dark dark:text-white">ที่อยู่</p>
+                                        <p class="text-xs text-white-dark leading-relaxed">
+                                            บมจ. เจเนอรัล อิเลคทรอนิค คอมเมอร์ซ เซอร์วิสเซส (GEC)<br />
+                                            989 ชั้น 16 อาคารสยามพิวรรธน์ทาวเวอร์ ถ.พระราม 1 แขวงปทุมวัน กรุงเทพฯ 10330
                                         </p>
                                     </div>
                                 </div>
@@ -329,7 +343,7 @@
                         </div>
                     </transition>
 
-                    <p class="text-center text-xs text-white-dark">© {{ new Date().getFullYear() }} IFS Finance System. All Rights Reserved.</p>
+                    <p class="text-center text-xs text-white-dark">© {{ new Date().getFullYear() }} NEX Finance System. All Rights Reserved.</p>
                 </div>
             </div>
         </div>
@@ -339,7 +353,7 @@
 <script lang="ts" setup>
     import { ref, computed, onMounted, nextTick } from 'vue';
 
-    useHead({ title: 'ลงทะเบียน - IFS Finance System' });
+    useHead({ title: 'ลงทะเบียน - NEX Finance System' });
     definePageMeta({ layout: 'auth-layout' });
 
     const CONSENT_URL     = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/consent';
@@ -364,11 +378,12 @@
     const isSuccess    = ref(false);
 
     // ── PDPA ──────────────────────────────────────────────────────
-    const pdpaConsent        = ref<any>(null);
-    const showPdpaModal      = ref(false);
-    const pdpaAccepted       = ref(false);
+    const pdpaConsent         = ref<any>(null);
+    const showPdpaModal       = ref(false);
+    const pdpaAccepted        = ref(false);
+    const noaAccepted         = ref(false);
     const hasScrolledToBottom = ref(false);
-    const pdpaScrollEl       = ref<HTMLElement | null>(null);
+    const pdpaScrollEl        = ref<HTMLElement | null>(null);
 
     const fetchPdpaConsent = async () => {
         try {
@@ -446,6 +461,10 @@
 
         if (!pdpaAccepted.value) {
             errorMessage.value = 'กรุณายอมรับนโยบายคุ้มครองข้อมูลส่วนบุคคล (PDPA) ก่อน';
+            return;
+        }
+        if (!noaAccepted.value) {
+            errorMessage.value = 'กรุณายินยอมการเปิดเผยข้อมูลแก่สถาบันการเงินและพันธมิตร';
             return;
         }
         if (taxIdError.value) {

@@ -47,6 +47,9 @@ importers:
       '@vuelidate/validators':
         specifier: ^2.0.0
         version: 2.0.4(vue@3.5.30(typescript@5.9.3))
+      '@vueup/vue-quill':
+        specifier: ^1.5.3
+        version: 1.5.3(vue@3.5.30(typescript@5.9.3))
       '@vueuse/core':
         specifier: ^11.1.0
         version: 11.3.0(vue@3.5.30(typescript@5.9.3))
@@ -1659,6 +1662,11 @@ packages:
     peerDependenciesMeta:
       '@vue/composition-api':
         optional: true
+
+  '@vueup/vue-quill@1.5.3':
+    resolution: {integrity: sha512-iklLMFjyChKGmYAUqoIx2t1rigCUSilDo1xJpYk9FLBmXPV3lmsy7fgbYZ11DNbXXGP6TXaQBQhgIy1uHo2rpA==}
+    peerDependencies:
+      vue: ^3.2.41
 
   '@vueuse/core@11.3.0':
     resolution: {integrity: sha512-7OC4Rl1f9G8IT6rUfi9JrKiXy4bfmHhZ5x2Ceojy0jnd3mHNEvV4JaRygH362ror6/NZ+Nl+n13LPzGiPN8cKA==}
@@ -3596,6 +3604,10 @@ packages:
 
   quill@1.3.7:
     resolution: {integrity: sha512-hG/DVzh/TiknWtE6QmWAF/pxoZKYxfe3J/d/+ShUWkDvvkZQVTPeVmUJVu1uE6DDooC4fWTiCLh84ul89oNz5g==}
+
+  quill@2.0.2:
+    resolution: {integrity: sha512-QfazNrhMakEdRG57IoYFwffUIr04LWJxbS/ZkidRFXYCQt63c1gK6Z7IHUXMx/Vh25WgPBU42oBaNzQ0K1R/xw==}
+    engines: {npm: '>=8.2.3'}
 
   quill@2.0.3:
     resolution: {integrity: sha512-xEYQBqfYx/sfb33VJiKnSJp8ehloavImQ2A6564GAbqG55PGw1dAWUn1MUbQB62t0azawUS2CZZhWCjO8gRvTw==}
@@ -6188,6 +6200,12 @@ snapshots:
       vue: 3.5.30(typescript@5.9.3)
       vue-demi: 0.13.11(vue@3.5.30(typescript@5.9.3))
 
+  '@vueup/vue-quill@1.5.3(vue@3.5.30(typescript@5.9.3))':
+    dependencies:
+      quill: 2.0.2
+      quill-delta: 5.1.0
+      vue: 3.5.30(typescript@5.9.3)
+
   '@vueuse/core@11.3.0(vue@3.5.30(typescript@5.9.3))':
     dependencies:
       '@types/web-bluetooth': 0.0.20
@@ -8271,6 +8289,13 @@ snapshots:
       extend: 3.0.2
       parchment: 1.1.4
       quill-delta: 3.6.3
+
+  quill@2.0.2:
+    dependencies:
+      eventemitter3: 5.0.4
+      lodash-es: 4.17.23
+      parchment: 3.0.0
+      quill-delta: 5.1.0
 
   quill@2.0.3:
     dependencies:

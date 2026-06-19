@@ -290,7 +290,7 @@
     import { ref, computed, onMounted, watch } from 'vue';
     import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 
-    useHead({ title: 'Registration List - IFS Finance' });
+    useHead({ title: 'Registration List - NEX Finance' });
     definePageMeta({ layout: 'default' });
 
     const { $supabase } = useNuxtApp();

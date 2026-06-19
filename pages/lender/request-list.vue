@@ -357,7 +357,7 @@
     import { useAuth } from '@/composables/useAuth';
     import Swal from 'sweetalert2';
 
-    useHead({ title: 'Request List - IFS Finance' });
+    useHead({ title: 'Request List - NEX Finance' });
     definePageMeta({ layout: 'default' });
 
     const LIST_URL  = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/listapplication';
