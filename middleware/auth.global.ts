@@ -1,6 +1,6 @@
 import { useAuthStore } from '@/stores/auth';
 
-const PUBLIC_ROUTES = ['/auth/cover-login', '/auth/cover-register', '/auth/pending', '/register', '/login', '/auth/change-password', '/auth/set-password'];
+const PUBLIC_ROUTES = ['/auth/cover-login', '/auth/cover-register', '/auth/pending', '/register', '/login', '/auth/change-password', '/auth/set-password', '/banner'];
 
 export default defineNuxtRouteMiddleware(async (to) => {
     // Supabase plugin is client-only — skip during SSR to avoid "Cannot read properties of undefined"

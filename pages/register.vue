@@ -172,9 +172,9 @@
                                 <button @click="currentStep--" class="btn btn-outline-secondary w-full uppercase" :disabled="isSubmitting">Back</button>
                                 <button @click="onSubmit" class="btn btn-gradient w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]" :disabled="!form.acceptTerms || isSubmitting">
                                     <span v-if="isSubmitting" class="flex items-center gap-2">
-                                        <icon-loader class="animate-spin w-4 h-4" /> Processing...
+                                        <icon-loader class="animate-spin w-4 h-4" /> กำลังส่ง...
                                     </span>
-                                    <span v-else>Submit Request</span>
+                                    <span v-else>ส่งข้อมูลและนัดหมาย</span>
                                 </button>
                             </div>
                         </div>
@@ -262,6 +262,7 @@
         }
     };
 
+    const SUPABASE_URL = 'https://oyynkpgjmfntrrrnrzto.supabase.co';
     const SUPABASE_REGISTER_URL = '/api/supabase/register';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0b3l1cmFhY25neXZnZHZ4dmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MDMxNDAsImV4cCI6MjA3NzM3MjQ2OX0.zbWnxWTFTwzjRurN6QUYEXEHqfRLtMSjBiPJF1S8UDU';
 
@@ -284,9 +285,51 @@
             const data = await res.json();
             if (!res.ok || !data.success) {
                 registrationError.value = data.error || 'Registration failed';
-            } else {
-                navigateTo('/auth/cover-login');
+                return;
             }
+
+            // ส่ง email แจ้งเตือนไปยัง NexFinance@gec.co.th ผ่าน send-notification Edge Function
+            const f = form.value;
+            const amountFormatted = Number(f.requestedAmount).toLocaleString('th-TH');
+            await $fetch(`${SUPABASE_URL}/functions/v1/send-notification`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY },
+                body: {
+                    title: `[NEX Finance] คำขอสินเชื่อใหม่ — ${f.companyName}`,
+                    notification_body: `บริษัท: ${f.companyName} | วงเงิน: ${amountFormatted} THB | ผู้ติดต่อ: ${f.contactName} | โทร: ${f.phone} | อีเมล: ${f.email}`,
+                    email_to: 'NexFinance@gec.co.th',
+                    email_subject: `[NEX Finance] คำขอสินเชื่อใหม่ — ${f.companyName}`,
+                    email_html: `
+                        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#14181F">
+                          <div style="background:#14467F;padding:24px 32px;border-radius:12px 12px 0 0">
+                            <span style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.03em">NEX<span style="color:#5B8DEF;font-weight:500">Finance</span></span>
+                            <p style="color:rgba(255,255,255,.75);font-size:13px;margin:6px 0 0">คำขอสินเชื่อแฟคเตอริ่งใหม่จากพอร์ทัล</p>
+                          </div>
+                          <div style="background:#F4F6FA;padding:28px 32px;border-radius:0 0 12px 12px;border:1px solid #E7EAF0;border-top:none">
+                            <h2 style="font-size:16px;font-weight:700;color:#14467F;margin:0 0 16px">ข้อมูลบริษัท</h2>
+                            <table style="width:100%;border-collapse:collapse;font-size:14px">
+                              <tr><td style="padding:8px 0;color:#5B6573;width:40%">ชื่อบริษัท</td><td style="padding:8px 0;font-weight:600">${f.companyName}</td></tr>
+                              <tr style="border-top:1px solid #E7EAF0"><td style="padding:8px 0;color:#5B6573">เลขที่ผู้เสียภาษี</td><td style="padding:8px 0;font-weight:600">${f.taxId}</td></tr>
+                              <tr style="border-top:1px solid #E7EAF0"><td style="padding:8px 0;color:#5B6573">ประเภทธุรกิจ</td><td style="padding:8px 0;font-weight:600">${f.businessType}</td></tr>
+                              <tr style="border-top:1px solid #E7EAF0"><td style="padding:8px 0;color:#5B6573">ลูกค้าหลัก (Buyer)</td><td style="padding:8px 0;font-weight:600">${f.buyer}</td></tr>
+                              <tr style="border-top:1px solid #E7EAF0"><td style="padding:8px 0;color:#5B6573">วงเงินที่ขอ</td><td style="padding:8px 0;font-weight:700;font-size:16px;color:#14467F">${amountFormatted} THB</td></tr>
+                            </table>
+                            <h2 style="font-size:16px;font-weight:700;color:#14467F;margin:24px 0 16px">ข้อมูลผู้ติดต่อ</h2>
+                            <table style="width:100%;border-collapse:collapse;font-size:14px">
+                              <tr><td style="padding:8px 0;color:#5B6573;width:40%">ชื่อผู้ติดต่อ</td><td style="padding:8px 0;font-weight:600">${f.contactName}</td></tr>
+                              <tr style="border-top:1px solid #E7EAF0"><td style="padding:8px 0;color:#5B6573">เบอร์โทรศัพท์</td><td style="padding:8px 0;font-weight:600">${f.phone}</td></tr>
+                              <tr style="border-top:1px solid #E7EAF0"><td style="padding:8px 0;color:#5B6573">อีเมล</td><td style="padding:8px 0;font-weight:600"><a href="mailto:${f.email}" style="color:#14467F">${f.email}</a></td></tr>
+                            </table>
+                            <div style="margin-top:24px;padding:16px;background:#fff;border-radius:10px;border:1px solid #E7EAF0;font-size:12px;color:#8A929E;line-height:1.5">
+                              ส่งโดยอัตโนมัติจาก IFS Customer Portal · NEX Finance<br>
+                              Reply ไปยัง <a href="mailto:${f.email}" style="color:#14467F">${f.email}</a> เพื่อติดต่อกลับผู้สมัคร
+                            </div>
+                          </div>
+                        </div>`,
+                },
+            }).catch(() => {});
+
+            navigateTo('/auth/cover-login');
         } catch (err) {
             registrationError.value = 'Network error — please try again';
         } finally {
