@@ -1,8 +1,8 @@
 export default defineNuxtConfig({
     app: {
         head: {
-            title: 'Sales Admin | VRISTO - Multipurpose Tailwind Dashboard Template',
-            titleTemplate: '%s | VRISTO - Multipurpose Tailwind Dashboard Template',
+            title: 'NEX Finance — IFS Admin',
+            titleTemplate: '%s | NEX Finance',
             htmlAttrs: {
                 lang: 'en',
             },
@@ -19,7 +19,7 @@ export default defineNuxtConfig({
                 { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
                 {
                     rel: 'stylesheet',
-                    href: 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap',
+                    href: 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;800&display=swap',
                 },
             ],
         },

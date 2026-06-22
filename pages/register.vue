@@ -15,7 +15,7 @@
                     <div class="absolute inset-y-0 w-full h-full bg-[url(/assets/images/auth/map.png)] bg-cover bg-center bg-no-repeat opacity-20"></div>
                     <div class="relative z-10 w-full max-w-[580px] text-white ltr:xl:-skew-x-[10deg] rtl:xl:skew-x-[10deg] lg:px-8">
                         <NuxtLink to="/" class="mb-10 block">
-                            <img src="/assets/images/auth/logo-white.svg" alt="Logo" class="w-16" />
+                            <NexLogo dark size="lg" />
                         </NuxtLink>
                         <h2 class="text-4xl font-black leading-tight mb-4">IFS Customer Portal</h2>
                         <p class="text-lg font-medium opacity-80 mb-8">ยื่นคำขอวงเงินสินเชื่อแฟคตอริ่ง (Factoring) สำหรับธุรกิจของคุณ</p>
@@ -29,7 +29,7 @@
                 <div class="relative flex w-full flex-col items-center justify-center gap-6 px-4 pb-16 pt-6 sm:px-16 lg:max-w-[667px]">
                     <div class="flex w-full max-w-[440px] items-center gap-2 lg:absolute lg:end-6 lg:top-6 lg:max-w-full">
                         <NuxtLink to="/" class="block lg:hidden">
-                            <img src="/assets/images/logo.svg" alt="Logo" class="mx-auto w-10" />
+                            <NexLogo icon-only size="lg" />
                         </NuxtLink>
                         <div class="dropdown ms-auto w-max">
                             <!-- Language dropdown if needed -->
@@ -59,7 +59,7 @@
                                 <span v-if="stepErrors.companyName" class="text-xs text-red-500 mt-1">{{ stepErrors.companyName }}</span>
                             </div>
                             <div>
-                                <label for="taxId">Tax ID (13 digits) <span class="text-danger">*</span></label>
+                                <label for="taxId">เลขนิติบุคคล (13 หลัก)</label>
                                 <input id="taxId" v-model="form.taxId" type="text" class="form-input" placeholder="Enter 13-digit tax ID" maxlength="13" />
                                 <span v-if="stepErrors.taxId" class="text-xs text-red-500 mt-1">{{ stepErrors.taxId }}</span>
                             </div>
@@ -181,9 +181,7 @@
 
                         <div class="mt-10 text-center">
                             <p class="text-base font-semibold">
-                                มีบัญชีแล้ว?
-                                <NuxtLink to="/auth/cover-login" class="uppercase text-primary underline transition-all hover:text-secondary">Login</NuxtLink>
-                            </p>
+                                                             </p>
                         </div>
                     </div>
                     <div class="mt-auto text-center text-xs text-white-dark">
@@ -236,9 +234,8 @@
     const validateStep1 = () => {
         stepErrors.value = {};
         if (!form.value.companyName) stepErrors.value.companyName = 'Required';
-        if (!form.value.taxId) stepErrors.value.taxId = 'Required';
-        else if (form.value.taxId.length !== 13) stepErrors.value.taxId = 'Must be 13 digits';
-        else if (!/^\d+$/.test(form.value.taxId)) stepErrors.value.taxId = 'Numbers only';
+        if (form.value.taxId && form.value.taxId.length !== 13) stepErrors.value.taxId = 'Must be 13 digits';
+        else if (form.value.taxId && !/^\d+$/.test(form.value.taxId)) stepErrors.value.taxId = 'Numbers only';
         if (!form.value.businessType) stepErrors.value.businessType = 'Required';
         if (!form.value.requestedAmount) stepErrors.value.requestedAmount = 'Required';
         if (!form.value.buyer) stepErrors.value.buyer = 'Required';

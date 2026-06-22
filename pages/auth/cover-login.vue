@@ -35,8 +35,8 @@
                 <div class="relative flex w-full flex-col items-center justify-center gap-6 px-4 pb-16 pt-6 sm:px-6 lg:max-w-[667px]">
                     <!-- Language selector -->
                     <div class="flex w-full max-w-[440px] items-center gap-2 lg:absolute lg:end-6 lg:top-6 lg:max-w-full">
-                        <NuxtLink to="/" class="block w-8 lg:hidden">
-                            <img src="/assets/images/logo.svg" alt="Logo" class="mx-auto w-10" />
+                        <NuxtLink to="/" class="block lg:hidden">
+                            <NexLogo icon-only size="lg" />
                         </NuxtLink>
                         <div class="dropdown ms-auto w-max">
                             <client-only>

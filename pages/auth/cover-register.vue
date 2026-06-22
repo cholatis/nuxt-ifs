@@ -28,8 +28,8 @@
                 <div class="relative flex w-full flex-col justify-center gap-3 px-6 pb-6 pt-4 sm:px-10">
                     <!-- Logo (mobile only) -->
                     <div class="flex lg:hidden">
-                        <NuxtLink to="/" class="block w-8">
-                            <img src="/assets/images/logo.svg" alt="Logo" class="mx-auto w-10" />
+                        <NuxtLink to="/">
+                            <NexLogo icon-only size="lg" />
                         </NuxtLink>
                     </div>
 
@@ -47,9 +47,6 @@
                         </div>
                         <h3 class="text-2xl font-bold text-success">ส่งข้อมูลเรียบร้อยแล้ว!</h3>
                         <p class="mt-2 text-white-dark">ทีมงานจะติดต่อกลับเร็วๆ นี้</p>
-                        <NuxtLink to="/auth/cover-login" class="btn btn-gradient mt-6 border-0 px-8">
-                            กลับหน้าเข้าสู่ระบบ
-                        </NuxtLink>
                     </div>
 
                     <!-- Two-column layout: Form + Contact Info -->
@@ -130,15 +127,13 @@
                                 <!-- เลขนิติบุคคล / เบอร์โทร -->
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="text-sm font-medium">เลขนิติบุคคล <span class="text-danger">*</span></label>
+                                        <label class="text-sm font-medium">เลขนิติบุคคล</label>
                                         <input
                                             v-model="form.taxId"
                                             type="text"
                                             placeholder="เลขนิติบุคคล 13 หลัก"
                                             class="form-input mt-1 placeholder:text-white-dark"
                                             maxlength="13"
-                                            pattern="\d{13}"
-                                            required
                                             :disabled="isLoading"
                                         />
                                         <p v-if="taxIdError" class="mt-1 text-xs text-danger">{{ taxIdError }}</p>
@@ -175,64 +170,19 @@
                                     ></textarea>
                                 </div>
 
-                                <!-- PDPA Checkbox -->
-                                <div class="rounded-lg border border-[#ebedf2] bg-white/60 p-3 dark:border-[#191e3a] dark:bg-black/20">
-                                    <label class="flex cursor-pointer items-start gap-3">
-                                        <input
-                                            type="checkbox"
-                                            class="form-checkbox mt-0.5 h-4 w-4 flex-shrink-0"
-                                            :checked="pdpaAccepted"
-                                            @click.prevent="openPdpaModal"
-                                            :disabled="isLoading"
-                                        />
-                                        <span class="text-sm text-dark dark:text-white">
-                                            ข้าพเจ้าได้อ่าน ทำความเข้าใจ และยอมรับหนังสือรับทราบและให้ความยินยอมเกี่ยวกับการคุ้มครองข้อมูลส่วนบุคคล (PDPA) นโยบายการจัดการข้อมูล (Data Policy) และเงื่อนไขการใช้บริการของ NEX Finance Platform แล้วทุกประการ
-                                            <button type="button" class="font-semibold text-primary underline hover:text-primary/80" @click.stop="openPdpaModal">
-                                                นโยบายคุ้มครองข้อมูลส่วนบุคคล (PDPA)
-                                            </button>
-                                            <span class="text-danger"> *</span>
-                                        </span>
-                                    </label>
-                                    <p v-if="pdpaAccepted" class="mt-2 flex items-center gap-1.5 text-xs text-success">
-                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        ยอมรับแล้ว — PDPA v{{ pdpaConsent?.consent_version }}
-                                    </p>
-                                </div>
-
-                                <!-- Data Disclosure Consent Checkbox -->
-                                <div class="rounded-lg border border-[#ebedf2] bg-white/60 p-3 dark:border-[#191e3a] dark:bg-black/20">
-                                    <label class="flex cursor-pointer items-start gap-3">
-                                        <input
-                                            type="checkbox"
-                                            v-model="noaAccepted"
-                                            class="form-checkbox mt-0.5 h-4 w-4 flex-shrink-0"
-                                            :disabled="isLoading"
-                                        />
-                                        <span class="text-sm text-dark dark:text-white">
-                                            ข้าพเจ้ายินยอม ให้ NEX Finance เปิดเผยข้อมูลที่เกี่ยวข้องแก่สถาบันการเงินและพันธมิตรทางธุรกิจเพื่อการพิจารณา และ ให้บริการทางการเงินที่เกี่ยวข้องกับธุรกรรมของข้าพเจ้าและ/หรือบริษัทที่ข้าพเจ้าเป็นผู้แทน
-                                            <span class="text-danger"> *</span>
-                                        </span>
-                                    </label>
-                                </div>
-
                                 <!-- Submit -->
                                 <button
                                     type="submit"
                                     class="btn w-full border-0 py-3 text-base font-bold text-white shadow-[0_10px_20px_-10px_rgba(67,97,238,0.5)] transition-all hover:opacity-90 disabled:opacity-60"
                                     style="background: linear-gradient(90deg, #4361ee 0%, #22c55e 100%)"
-                                    :disabled="isLoading || !pdpaAccepted || !noaAccepted"
+                                    :disabled="isLoading"
                                 >
                                     <span v-if="isLoading" class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-l-transparent ltr:mr-2 rtl:ml-2"></span>
                                     {{ isLoading ? 'กำลังส่งข้อมูล...' : 'ส่งข้อมูลและนัดหมาย' }}
                                 </button>
 
                                 <p class="text-center text-sm dark:text-white">
-                                    มีบัญชีแล้ว?
-                                    <NuxtLink to="/auth/cover-login" class="font-semibold text-primary underline hover:text-black dark:hover:text-white">
-                                        เข้าสู่ระบบ
-                                    </NuxtLink>
+                                     
                                 </p>
                             </form>
                         </div>
@@ -264,7 +214,7 @@
                                     </div>
                                     <div>
                                         <p class="text-sm font-semibold text-dark dark:text-white">อีเมล</p>
-                                        <p class="text-sm text-white-dark">NexFinance@gec.co.th</p>
+                                        <p class="text-sm text-white-dark">nexfinance@gec.co.th</p>
                                     </div>
                                 </div>
 
@@ -289,61 +239,7 @@
 
                     </div><!-- end two-column grid -->
 
-                    <!-- ── PDPA Modal ─────────────────────────────────────── -->
-                    <transition name="fade">
-                        <div v-if="showPdpaModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 px-4">
-                            <div class="flex w-full max-w-2xl flex-col rounded-2xl bg-white shadow-2xl dark:bg-[#1b2e4b]" style="max-height: 90vh">
-                                <!-- Header -->
-                                <div class="flex items-center justify-between border-b border-[#ebedf2] px-6 py-4 dark:border-[#191e3a]">
-                                    <div>
-                                        <h4 class="text-lg font-bold dark:text-white">นโยบายคุ้มครองข้อมูลส่วนบุคคล (PDPA)</h4>
-                                        <p v-if="pdpaConsent" class="text-xs text-white-dark">เวอร์ชัน {{ pdpaConsent.consent_version }}</p>
-                                    </div>
-                                    <button class="text-gray-400 hover:text-gray-600" @click="closePdpaModal">
-                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-                                </div>
-
-                                <!-- Scrollable content -->
-                                <div
-                                    ref="pdpaScrollEl"
-                                    class="flex-1 overflow-y-auto px-6 py-5"
-                                    @scroll="onPdpaScroll"
-                                    style="min-height: 0"
-                                >
-                                    <div v-if="!pdpaConsent" class="flex items-center justify-center py-16 text-white-dark">
-                                        <span class="inline-block h-6 w-6 animate-spin rounded-full border-4 border-primary border-l-transparent mr-3"></span>
-                                        กำลังโหลด...
-                                    </div>
-                                    <div v-else class="pdpa-content" v-html="pdpaConsent.consent_detail"></div>
-                                </div>
-
-                                <!-- Scroll hint -->
-                                <div v-if="!hasScrolledToBottom && pdpaConsent" class="border-t border-[#ebedf2] bg-warning/5 px-6 py-2 text-center text-xs text-warning dark:border-[#191e3a]">
-                                    ↓ กรุณาเลื่อนอ่านจนครบก่อนยอมรับ
-                                </div>
-
-                                <!-- Footer -->
-                                <div class="flex items-center justify-end gap-3 border-t border-[#ebedf2] px-6 py-4 dark:border-[#191e3a]">
-                                    <button class="btn btn-outline-danger" @click="closePdpaModal">ไม่ยอมรับ</button>
-                                    <button
-                                        class="btn btn-success gap-2 disabled:opacity-50"
-                                        :disabled="!hasScrolledToBottom || !pdpaConsent"
-                                        @click="acceptPdpa"
-                                    >
-                                        <svg v-if="hasScrolledToBottom" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        ยอมรับ PDPA
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </transition>
-
-                    <p class="text-center text-xs text-white-dark">© {{ new Date().getFullYear() }} NEX Finance System. All Rights Reserved.</p>
+                    <p class="text-center text-xs text-white-dark">© {{ new Date().getFullYear() }} General Electronic Commerce Services Co., Ltd.   All Rights Reserved.</p>
                 </div>
             </div>
         </div>
@@ -351,14 +247,14 @@
 </template>
 
 <script lang="ts" setup>
-    import { ref, computed, onMounted, nextTick } from 'vue';
+    import { ref, computed } from 'vue';
 
     useHead({ title: 'ลงทะเบียน - NEX Finance System' });
     definePageMeta({ layout: 'auth-layout' });
 
-    const CONSENT_URL     = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/consent';
-    const CONSENT_TX_URL  = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/consent-transaction';
-    const REGISTER_URL    = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/createregister';
+    const REGISTER_URL     = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/createregister';
+    const NOTIFICATION_URL = 'https://oyynkpgjmfntrrrnrzto.supabase.co/functions/v1/send-notification';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95eW5rcGdqbWZudHJycm5yenRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTgyOTgsImV4cCI6MjA5MzA3NDI5OH0.hRZRTB_OdVYK617rXg6Qg3ySeXF91UdYELCKxaeeSxs';
 
     const form = ref({
         title      : '',
@@ -377,78 +273,6 @@
     const errorMessage = ref('');
     const isSuccess    = ref(false);
 
-    // ── PDPA ──────────────────────────────────────────────────────
-    const pdpaConsent         = ref<any>(null);
-    const showPdpaModal       = ref(false);
-    const pdpaAccepted        = ref(false);
-    const noaAccepted         = ref(false);
-    const hasScrolledToBottom = ref(false);
-    const pdpaScrollEl        = ref<HTMLElement | null>(null);
-
-    const fetchPdpaConsent = async () => {
-        try {
-            const res  = await fetch(`${CONSENT_URL}?type=PDPA&active=true`);
-            const json = await res.json();
-            pdpaConsent.value = json.data?.[0] ?? null;
-        } catch (e) {
-            console.error('fetch PDPA consent error', e);
-        }
-    };
-
-    const openPdpaModal = async () => {
-        if (pdpaAccepted.value) {
-            // Allow toggle off
-            pdpaAccepted.value = false;
-            return;
-        }
-        hasScrolledToBottom.value = false;
-        showPdpaModal.value = true;
-        await nextTick();
-        // Check if content is short enough to not need scrolling
-        if (pdpaScrollEl.value) {
-            const el = pdpaScrollEl.value;
-            if (el.scrollHeight <= el.clientHeight + 10) {
-                hasScrolledToBottom.value = true;
-            }
-        }
-    };
-
-    const closePdpaModal = () => {
-        showPdpaModal.value = false;
-    };
-
-    const acceptPdpa = () => {
-        pdpaAccepted.value  = true;
-        showPdpaModal.value = false;
-    };
-
-    const onPdpaScroll = () => {
-        if (!pdpaScrollEl.value) return;
-        const el = pdpaScrollEl.value;
-        if (el.scrollTop + el.clientHeight >= el.scrollHeight - 20) {
-            hasScrolledToBottom.value = true;
-        }
-    };
-
-    const recordConsentTransaction = async () => {
-        if (!pdpaConsent.value) return;
-        try {
-            await fetch(CONSENT_TX_URL, {
-                method : 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body   : JSON.stringify({
-                    email          : form.value.email.trim(),
-                    tax_id         : form.value.taxId || null,
-                    consent_type   : pdpaConsent.value.consent_type,
-                    consent_version: pdpaConsent.value.consent_version,
-                    consent_value  : true,
-                }),
-            });
-        } catch (e) {
-            console.error('consent transaction error', e);
-        }
-    };
-
     // ── Validation ────────────────────────────────────────────────
     const taxIdError = computed(() => {
         if (!form.value.taxId) return '';
@@ -459,14 +283,6 @@
     const handleRegister = async () => {
         errorMessage.value = '';
 
-        if (!pdpaAccepted.value) {
-            errorMessage.value = 'กรุณายอมรับนโยบายคุ้มครองข้อมูลส่วนบุคคล (PDPA) ก่อน';
-            return;
-        }
-        if (!noaAccepted.value) {
-            errorMessage.value = 'กรุณายินยอมการเปิดเผยข้อมูลแก่สถาบันการเงินและพันธมิตร';
-            return;
-        }
         if (taxIdError.value) {
             errorMessage.value = taxIdError.value;
             return;
@@ -505,8 +321,44 @@
                 return;
             }
 
-            // Record consent transaction after successful registration
-            await recordConsentTransaction();
+            // ส่ง email แจ้งเตือนไปยัง nexfinance@gec.co.th
+            const f = form.value;
+            const fullName = `${f.title !== 'อื่นๆ' ? f.title : f.titleOther} ${f.firstname} ${f.lastname}`.trim();
+            fetch(NOTIFICATION_URL, {
+                method : 'POST',
+                headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY },
+                body   : JSON.stringify({
+                    title             : `[NEX Finance] ติดต่อใหม่ — ${f.companyName || fullName}`,
+                    notification_body : `ผู้ติดต่อ: ${fullName} | บริษัท: ${f.companyName} | โทร: ${f.phone} | อีเมล: ${f.email}`,
+                    email_to          : 'nexfinance@gec.co.th',
+                    email_subject     : `[NEX Finance] ติดต่อใหม่ — ${f.companyName || fullName}`,
+                    email_html        : `
+                        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#14181F">
+                          <div style="background:#14467F;padding:24px 32px;border-radius:12px 12px 0 0">
+                            <span style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.03em">NEX<span style="color:#5B8DEF;font-weight:500">Finance</span></span>
+                            <p style="color:rgba(255,255,255,.75);font-size:13px;margin:6px 0 0">คำขอติดต่อใหม่จากพอร์ทัล</p>
+                          </div>
+                          <div style="background:#F4F6FA;padding:28px 32px;border-radius:0 0 12px 12px;border:1px solid #E7EAF0;border-top:none">
+                            <h2 style="font-size:16px;font-weight:700;color:#14467F;margin:0 0 16px">ข้อมูลผู้ติดต่อ</h2>
+                            <table style="width:100%;border-collapse:collapse;font-size:14px">
+                              <tr><td style="padding:8px 0;color:#5B6573;width:40%">ชื่อ-นามสกุล</td><td style="padding:8px 0;font-weight:600">${fullName}</td></tr>
+                              <tr style="border-top:1px solid #E7EAF0"><td style="padding:8px 0;color:#5B6573">อีเมล</td><td style="padding:8px 0;font-weight:600"><a href="mailto:${f.email}" style="color:#14467F">${f.email}</a></td></tr>
+                              <tr style="border-top:1px solid #E7EAF0"><td style="padding:8px 0;color:#5B6573">เบอร์โทร</td><td style="padding:8px 0;font-weight:600">${f.phone || '-'}</td></tr>
+                              <tr style="border-top:1px solid #E7EAF0"><td style="padding:8px 0;color:#5B6573">บริษัท</td><td style="padding:8px 0;font-weight:600">${f.companyName || '-'}</td></tr>
+                              <tr style="border-top:1px solid #E7EAF0"><td style="padding:8px 0;color:#5B6573">เลขนิติบุคคล</td><td style="padding:8px 0;font-weight:600">${f.taxId || '-'}</td></tr>
+                              <tr style="border-top:1px solid #E7EAF0"><td style="padding:8px 0;color:#5B6573">ตำแหน่ง</td><td style="padding:8px 0;font-weight:600">${f.position || '-'}</td></tr>
+                            </table>
+                            ${f.message ? `
+                            <h2 style="font-size:16px;font-weight:700;color:#14467F;margin:24px 0 12px">ข้อความ/คำถาม</h2>
+                            <div style="background:#fff;border-radius:8px;border:1px solid #E7EAF0;padding:16px;font-size:14px;line-height:1.6">${f.message}</div>` : ''}
+                            <div style="margin-top:24px;padding:16px;background:#fff;border-radius:10px;border:1px solid #E7EAF0;font-size:12px;color:#8A929E;line-height:1.5">
+                              ส่งโดยอัตโนมัติจาก NEX Finance Portal<br>
+                              Reply ไปยัง <a href="mailto:${f.email}" style="color:#14467F">${f.email}</a> เพื่อติดต่อกลับ
+                            </div>
+                          </div>
+                        </div>`,
+                }),
+            }).catch(() => {});
 
             isSuccess.value = true;
         } catch {
@@ -516,7 +368,7 @@
         }
     };
 
-    onMounted(fetchPdpaConsent);
+
 </script>
 
 <style scoped>

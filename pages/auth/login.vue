@@ -15,7 +15,7 @@
                     <div class="absolute inset-y-0 w-full h-full bg-[url(/assets/images/auth/map.png)] bg-cover bg-center bg-no-repeat opacity-20"></div>
                     <div class="relative z-10 w-full max-w-[580px] text-white ltr:xl:-skew-x-[10deg] rtl:xl:skew-x-[10deg] lg:px-8">
                         <NuxtLink to="/" class="mb-10 block">
-                            <img src="/assets/images/auth/logo-white.svg" alt="Logo" class="w-16" />
+                            <NexLogo dark size="lg" />
                         </NuxtLink>
                         <h2 class="text-4xl font-black leading-tight mb-4">NEX Finance System</h2>
                         <p class="text-lg font-medium opacity-80 mb-8">เข้าสู่ระบบเพื่อจัดการสินเชื่อแฟคตอริ่งและข้อมูลธุรกิจของคุณ</p>
@@ -29,7 +29,7 @@
                 <div class="relative flex w-full flex-col items-center justify-center gap-6 px-4 pb-16 pt-6 sm:px-16 lg:max-w-[667px]">
                     <div class="flex w-full max-w-[440px] items-center gap-2 lg:absolute lg:end-6 lg:top-6 lg:max-w-full">
                         <NuxtLink to="/" class="block lg:hidden">
-                            <img src="/assets/images/logo.svg" alt="Logo" class="mx-auto w-10" />
+                            <NexLogo icon-only size="lg" />
                         </NuxtLink>
                     </div>
                     

@@ -15,8 +15,8 @@
                 <div class="relative hidden w-full items-center justify-center bg-[linear-gradient(225deg,rgba(239,18,98,1)_0%,rgba(67,97,238,1)_100%)] p-5 lg:inline-flex lg:max-w-[835px] xl:-ms-28 ltr:xl:skew-x-[14deg] rtl:xl:skew-x-[-14deg]">
                     <div class="absolute inset-y-0 w-8 from-primary/10 via-transparent to-transparent ltr:-right-10 ltr:bg-gradient-to-r rtl:-left-10 rtl:bg-gradient-to-l xl:w-16 ltr:xl:-right-20 rtl:xl:-left-20"></div>
                     <div class="ltr:xl:-skew-x-[14deg] rtl:xl:skew-x-[14deg]">
-                        <NuxtLink to="/" class="ms-10 block w-48 lg:w-72">
-                            <img src="/assets/images/auth/logo-white.svg" alt="Logo" class="w-full" />
+                        <NuxtLink to="/" class="ms-10 block">
+                            <NexLogo dark size="lg" />
                         </NuxtLink>
                         <div class="mt-24 hidden w-full max-w-[430px] lg:block">
                             <img src="/assets/images/auth/reset-password.svg" alt="Set Password" class="w-full" />
@@ -28,7 +28,7 @@
                 <div class="relative flex w-full flex-col items-center justify-center gap-6 px-4 pb-16 pt-6 sm:px-6 lg:max-w-[667px]">
                     <div class="flex w-full max-w-[440px] items-center gap-2 lg:absolute lg:end-6 lg:top-6 lg:max-w-full">
                         <NuxtLink to="/" class="block lg:hidden">
-                            <img src="/assets/images/logo.svg" alt="Logo" class="mx-auto w-8" />
+                            <NexLogo icon-only size="lg" />
                         </NuxtLink>
                     </div>
 

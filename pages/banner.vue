@@ -389,11 +389,7 @@
       <!-- FOOTER -->
       <footer class="px-[72px] py-[22px] pb-[26px] flex items-center justify-between gap-[18px] bg-[#14181F]">
         <div class="text-[11.5px] tracking-[0.02em] text-white/70 font-['IBM_Plex_Sans_Thai',system-ui,sans-serif]">
-          Powered by <b class="text-white font-semibold">GEC</b>
-          <span class="text-white/35 mx-[0.12em]">·</span>
-          <b class="text-white font-semibold">Kota Capital</b>
-          <span class="text-white/35 mx-[0.12em]">·</span>
-          <b class="text-white font-semibold">IceKredit</b>
+          Powered by <b class="text-white font-semibold">General Electronic Commerce Services Co., Ltd.  and PROSPERA AI PTE. LTD.</b>
         </div>
         <div class="text-[10.5px] text-white/45 text-right max-w-[46ch] leading-[1.45] font-['IBM_Plex_Sans_Thai',system-ui,sans-serif]">
           <span class="block">*เงื่อนไขการพิจารณาสินเชื่อเป็นไปตามหลักเกณฑ์ที่บริษัทฯ กำหนด</span>
