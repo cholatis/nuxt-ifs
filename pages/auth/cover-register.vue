@@ -251,7 +251,7 @@
                                     </div>
                                     <div>
                                         <p class="text-sm font-semibold text-dark dark:text-white">โทรศัพท์</p>
-                                        <p class="text-sm text-white-dark">085 872 9728, 02 275 5551</p>
+                                        <p class="text-sm text-white-dark">คุณต้น · 089-185-8327</p>
                                     </div>
                                 </div>
 
