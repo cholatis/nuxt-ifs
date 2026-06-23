@@ -15,7 +15,7 @@
             >
                 <!-- Left panel -->
                 <div
-                    class="relative hidden w-full items-center justify-center bg-[linear-gradient(225deg,rgba(239,18,98,1)_0%,rgba(67,97,238,1)_100%)] p-5 lg:inline-flex lg:max-w-[835px] xl:-ms-28 ltr:xl:skew-x-[14deg] rtl:xl:skew-x-[-14deg]"
+                    class="relative hidden w-full items-center justify-center bg-[linear-gradient(225deg,#16234d_0%,#2c5fe0_100%)] p-5 lg:inline-flex lg:max-w-[835px] xl:-ms-28 ltr:xl:skew-x-[14deg] rtl:xl:skew-x-[-14deg]"
                 >
                     <div
                         class="absolute inset-y-0 w-8 from-primary/10 via-transparent to-transparent ltr:-right-10 ltr:bg-gradient-to-r rtl:-left-10 rtl:bg-gradient-to-l xl:w-16 ltr:xl:-right-20 rtl:xl:-left-20"
@@ -36,7 +36,7 @@
                     <!-- Language selector -->
                     <div class="flex w-full max-w-[440px] items-center gap-2 lg:absolute lg:end-6 lg:top-6 lg:max-w-full">
                         <NuxtLink to="/" class="block lg:hidden">
-                            <NexLogo icon-only size="lg" />
+                            <NexLogo size="lg" />
                         </NuxtLink>
                         <div class="dropdown ms-auto w-max">
                             <client-only>
@@ -121,7 +121,7 @@
 
                             <button
                                 type="submit"
-                                class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"
+                                class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(44,95,224,0.44)]"
                                 :disabled="isLoading"
                             >
                                 <span v-if="isLoading" class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-l-transparent ltr:mr-2 rtl:ml-2"></span>

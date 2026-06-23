@@ -11,7 +11,7 @@
 
             <div class="relative flex w-full max-w-[1502px] flex-col justify-between overflow-hidden rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 lg:min-h-[758px] lg:flex-row lg:gap-10 xl:gap-0">
                 <!-- Left panel (branding) -->
-                <div class="relative hidden w-full items-center justify-center bg-[linear-gradient(225deg,rgba(239,18,98,1)_0%,rgba(67,97,238,1)_100%)] p-5 lg:inline-flex lg:max-w-[835px] xl:-ms-28 ltr:xl:skew-x-[14deg] rtl:xl:skew-x-[-14deg]">
+                <div class="relative hidden w-full items-center justify-center bg-[linear-gradient(225deg,#16234d_0%,#2c5fe0_100%)] p-5 lg:inline-flex lg:max-w-[835px] xl:-ms-28 ltr:xl:skew-x-[14deg] rtl:xl:skew-x-[-14deg]">
                     <div class="absolute inset-y-0 w-8 from-primary/10 via-transparent to-transparent ltr:-right-10 ltr:bg-gradient-to-r rtl:-left-10 rtl:bg-gradient-to-l xl:w-16 ltr:xl:-right-20 rtl:xl:-left-20"></div>
                     <div class="ltr:xl:-skew-x-[14deg] rtl:xl:skew-x-[14deg]">
                         <div class="ms-10 block">
@@ -29,7 +29,7 @@
                     <!-- Logo (mobile only) -->
                     <div class="flex lg:hidden">
                         <NuxtLink to="/">
-                            <NexLogo icon-only size="lg" />
+                            <NexLogo size="lg" />
                         </NuxtLink>
                     </div>
 
@@ -173,12 +173,12 @@
                                 <!-- Submit -->
                                 <button
                                     type="submit"
-                                    class="btn w-full border-0 py-3 text-base font-bold text-white shadow-[0_10px_20px_-10px_rgba(67,97,238,0.5)] transition-all hover:opacity-90 disabled:opacity-60"
+                                    class="btn w-full border-0 py-3 text-base font-bold text-white shadow-[0_10px_20px_-10px_rgba(44,95,224,0.5)] transition-all hover:opacity-90 disabled:opacity-60"
                                     style="background: linear-gradient(90deg, #4361ee 0%, #22c55e 100%)"
                                     :disabled="isLoading"
                                 >
                                     <span v-if="isLoading" class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-l-transparent ltr:mr-2 rtl:ml-2"></span>
-                                    {{ isLoading ? 'กำลังส่งข้อมูล...' : 'ส่งข้อมูลและนัดหมาย' }}
+                                    {{ isLoading ? 'กำลังส่งข้อมูล...' : 'ส่งข้อมูล และรอรับการติดต่อกลับ' }}
                                 </button>
 
                                 <p class="text-center text-sm dark:text-white">
@@ -331,12 +331,12 @@
                     title             : `[NEX Finance] ติดต่อใหม่ — ${f.companyName || fullName}`,
                     notification_body : `ผู้ติดต่อ: ${fullName} | บริษัท: ${f.companyName} | โทร: ${f.phone} | อีเมล: ${f.email}`,
                     email_to          : 'nexfinance@gec.co.th',
-                    email_subject     : `[NEX Finance] ติดต่อใหม่ — ${f.companyName || fullName}`,
+                    email_subject     : '[NEX Finance] Customer Interested – Please Follow Up',
                     email_html        : `
                         <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#14181F">
                           <div style="background:#14467F;padding:24px 32px;border-radius:12px 12px 0 0">
                             <span style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.03em">NEX<span style="color:#5B8DEF;font-weight:500">Finance</span></span>
-                            <p style="color:rgba(255,255,255,.75);font-size:13px;margin:6px 0 0">คำขอติดต่อใหม่จากพอร์ทัล</p>
+                            <p style="color:rgba(255,255,255,.75);font-size:13px;margin:6px 0 0">คำขอติดต่อจาก NEX Finance</p>
                           </div>
                           <div style="background:#F4F6FA;padding:28px 32px;border-radius:0 0 12px 12px;border:1px solid #E7EAF0;border-top:none">
                             <h2 style="font-size:16px;font-weight:700;color:#14467F;margin:0 0 16px">ข้อมูลผู้ติดต่อ</h2>
@@ -352,8 +352,7 @@
                             <h2 style="font-size:16px;font-weight:700;color:#14467F;margin:24px 0 12px">ข้อความ/คำถาม</h2>
                             <div style="background:#fff;border-radius:8px;border:1px solid #E7EAF0;padding:16px;font-size:14px;line-height:1.6">${f.message}</div>` : ''}
                             <div style="margin-top:24px;padding:16px;background:#fff;border-radius:10px;border:1px solid #E7EAF0;font-size:12px;color:#8A929E;line-height:1.5">
-                              ส่งโดยอัตโนมัติจาก NEX Finance Portal<br>
-                              Reply ไปยัง <a href="mailto:${f.email}" style="color:#14467F">${f.email}</a> เพื่อติดต่อกลับ
+                              ส่งอัตโนมัติ (no-reply) ให้ติดต่อลูกค้าตามรายละเอียดด้านบน
                             </div>
                           </div>
                         </div>`,

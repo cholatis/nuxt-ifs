@@ -16,7 +16,7 @@ export default defineNuxtConfig({
                 { name: 'format-detection', content: 'telephone=no' },
             ],
             link: [
-                { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
+                { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
                 {
                     rel: 'stylesheet',
                     href: 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;800&display=swap',

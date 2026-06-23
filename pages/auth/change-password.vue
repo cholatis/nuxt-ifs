@@ -119,7 +119,7 @@
 
                         <button
                             type="submit"
-                            class="btn btn-gradient mt-2 w-full border-0 py-3 font-bold uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)] disabled:opacity-50"
+                            class="btn btn-gradient mt-2 w-full border-0 py-3 font-bold uppercase shadow-[0_10px_20px_-10px_rgba(44,95,224,0.44)] disabled:opacity-50"
                             :disabled="isLoading || mismatch || !isPasswordValid"
                         >
                             <span v-if="isLoading" class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-l-transparent ltr:mr-2 rtl:ml-2"></span>

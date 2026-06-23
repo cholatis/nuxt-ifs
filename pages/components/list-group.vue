@@ -25,7 +25,7 @@
                         <div class="border-b border-[#e0e6ed] px-4 py-2.5 dark:border-[#1b2e4b]">Cras justo odio</div>
                         <div class="border-b border-[#e0e6ed] px-4 py-2.5 dark:border-[#1b2e4b]">Dapibus ac facilisis in</div>
                         <div
-                            class="border-b border-[#e0e6ed] bg-primary px-4 py-2.5 text-white shadow-[0_1px_15px_1px_rgba(67,97,238,0.15)] dark:border-[#1b2e4b]"
+                            class="border-b border-[#e0e6ed] bg-primary px-4 py-2.5 text-white shadow-[0_1px_15px_1px_rgba(44,95,224,0.15)] dark:border-[#1b2e4b]"
                         >
                             Morbi leo risus
                         </div>
@@ -40,7 +40,7 @@
 &lt;div class=&quot;flex flex-col rounded-md border border-[#e0e6ed] dark:border-[#1b2e4b]&quot;&gt;
   &lt;div class=&quot;border-b border-[#e0e6ed] dark:border-[#1b2e4b] px-4 py-2.5&quot;&gt;Cras justo odio&lt;/div&gt;
   &lt;div class=&quot;border-b border-[#e0e6ed] dark:border-[#1b2e4b] px-4 py-2.5&quot;&gt;Dapibus ac facilisis in&lt;/div&gt;
-  &lt;div class=&quot;border-b border-[#e0e6ed] dark:border-[#1b2e4b] px-4 py-2.5 bg-primary text-white shadow-[0_1px_15px_1px_rgba(67,97,238,0.15)]&quot;&gt;Morbi leo risus&lt;/div&gt;
+  &lt;div class=&quot;border-b border-[#e0e6ed] dark:border-[#1b2e4b] px-4 py-2.5 bg-primary text-white shadow-[0_1px_15px_1px_rgba(44,95,224,0.15)]&quot;&gt;Morbi leo risus&lt;/div&gt;
   &lt;div class=&quot;border-b border-[#e0e6ed] dark:border-[#1b2e4b] px-4 py-2.5&quot;&gt;Porta ac consectetur ac&lt;/div&gt;
   &lt;div class=&quot;px-4 py-2.5&quot;&gt;Vestibulum at eros&lt;/div&gt;
 &lt;/div&gt;
@@ -70,7 +70,7 @@
                         >
                         <a
                             href="javascript:;"
-                            class="border-b border-[#e0e6ed] bg-primary px-4 py-2.5 text-white shadow-[0_1px_15px_1px_rgba(67,97,238,0.15)] hover:bg-[#eee] hover:text-black dark:border-[#1b2e4b] dark:hover:bg-[#eee]/10 dark:hover:text-white"
+                            class="border-b border-[#e0e6ed] bg-primary px-4 py-2.5 text-white shadow-[0_1px_15px_1px_rgba(44,95,224,0.15)] hover:bg-[#eee] hover:text-black dark:border-[#1b2e4b] dark:hover:bg-[#eee]/10 dark:hover:text-white"
                             >Morbi leo risus</a
                         >
                         <a href="javascript:;" class="border-b border-[#e0e6ed] px-4 py-2.5 hover:bg-[#eee] dark:border-[#1b2e4b] dark:hover:bg-[#eee]/10"
@@ -95,7 +95,7 @@
       py-2.5
       bg-primary
       text-white
-      shadow-[0_1px_15px_1px_rgba(67,97,238,0.15)]
+      shadow-[0_1px_15px_1px_rgba(44,95,224,0.15)]
       hover:bg-[#eee]
       dark:hover:bg-[#eee]/10
       hover:text-black
@@ -134,7 +134,7 @@
                             </div>
                         </div>
                         <div
-                            class="group flex border-b border-[#e0e6ed] bg-primary px-4 py-2.5 text-white shadow-[0_1px_15px_1px_rgba(67,97,238,0.15)] hover:bg-[#eee] hover:text-black dark:border-[#1b2e4b] dark:hover:bg-[#eee]/10 dark:hover:text-white"
+                            class="group flex border-b border-[#e0e6ed] bg-primary px-4 py-2.5 text-white shadow-[0_1px_15px_1px_rgba(44,95,224,0.15)] hover:bg-[#eee] hover:text-black dark:border-[#1b2e4b] dark:hover:bg-[#eee]/10 dark:hover:text-white"
                         >
                             <div class="mt-0.5 text-white group-hover:text-primary ltr:mr-2 rtl:ml-2.5">
                                 <icon-map-pin />
@@ -178,7 +178,7 @@
       py-2.5
       bg-primary
       text-white
-      shadow-[0_1px_15px_1px_rgba(67,97,238,0.15)]
+      shadow-[0_1px_15px_1px_rgba(44,95,224,0.15)]
       hover:bg-[#eee]
       dark:hover:bg-[#eee]/10
       hover:text-black
@@ -232,7 +232,7 @@
                             </div>
                         </div>
                         <div
-                            class="group flex border-b border-[#e0e6ed] bg-primary px-4 py-2.5 text-white shadow-[0_1px_15px_1px_rgba(67,97,238,0.15)] hover:bg-[#eee] hover:text-black dark:border-[#1b2e4b] dark:hover:bg-[#eee]/10 dark:hover:text-white"
+                            class="group flex border-b border-[#e0e6ed] bg-primary px-4 py-2.5 text-white shadow-[0_1px_15px_1px_rgba(44,95,224,0.15)] hover:bg-[#eee] hover:text-black dark:border-[#1b2e4b] dark:hover:bg-[#eee]/10 dark:hover:text-white"
                         >
                             <div class="ltr:mr-3 rtl:ml-3">
                                 <img src="/assets/images/profile-2.jpeg" alt="" class="h-12 w-12 rounded-full object-cover" />
@@ -276,7 +276,7 @@
       py-2.5
       bg-primary
       text-white
-      shadow-[0_1px_15px_1px_rgba(67,97,238,0.15)]
+      shadow-[0_1px_15px_1px_rgba(44,95,224,0.15)]
       hover:bg-[#eee]
       dark:hover:bg-[#eee]/10
       hover:text-black
@@ -330,7 +330,7 @@
                             >
                         </div>
                         <div
-                            class="group flex space-x-4 border-b border-[#e0e6ed] bg-primary px-4 py-2.5 text-white shadow-[0_1px_15px_1px_rgba(67,97,238,0.15)] hover:bg-[#eee] hover:text-black rtl:space-x-reverse dark:border-[#1b2e4b] dark:hover:bg-[#eee]/10 dark:hover:text-white"
+                            class="group flex space-x-4 border-b border-[#e0e6ed] bg-primary px-4 py-2.5 text-white shadow-[0_1px_15px_1px_rgba(44,95,224,0.15)] hover:bg-[#eee] hover:text-black rtl:space-x-reverse dark:border-[#1b2e4b] dark:hover:bg-[#eee]/10 dark:hover:text-white"
                         >
                             <input id="tack_checkbox2" type="checkbox" class="form-checkbox checked:border-white-light dark:checked:border-[#253b5c]" />
                             <label for="tack_checkbox2" class="mb-0 cursor-pointer"
@@ -369,7 +369,7 @@
       py-2.5
       bg-primary
       text-white
-      shadow-[0_1px_15px_1px_rgba(67,97,238,0.15)]
+      shadow-[0_1px_15px_1px_rgba(44,95,224,0.15)]
       hover:bg-[#eee]
       dark:hover:bg-[#eee]/10
       hover:text-black

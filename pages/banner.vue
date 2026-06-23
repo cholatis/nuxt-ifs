@@ -37,7 +37,7 @@
             to="/register"
             class="inline-flex items-center gap-2.5 mt-7 px-7 py-3.5 rounded-[14px] font-['Anuphan',system-ui,sans-serif] font-bold text-[16px] text-white bg-[#B4182B] transition-all duration-200 ease-out hover:bg-[#8C0F20] hover:shadow-[0_8px_24px_-8px_rgba(180,24,43,.65)] hover:-translate-y-px active:translate-y-0 active:shadow-none select-none"
           >
-            <span>สมัครใช้งานฟรี</span>
+            <span>สนใจต้องการข้อมูลเพิ่มเติม</span>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M3.5 9h11M9.5 4.5 14 9l-4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -379,7 +379,7 @@
           to="/register"
           class="inline-flex items-center gap-2.5 mt-8 px-8 py-4 rounded-[14px] font-['Anuphan',system-ui,sans-serif] font-bold text-[17px] text-[#B4182B] bg-white transition-all duration-200 ease-out hover:bg-[#FFF5F6] hover:shadow-[0_10px_30px_-8px_rgba(0,0,0,.35)] hover:-translate-y-px active:translate-y-0 active:shadow-none select-none"
         >
-          <span>สมัครใช้งานฟรีเลย</span>
+          <span>สนใจต้องการข้อมูลเพิ่มเติม</span>
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
             <path d="M3.5 9h11M9.5 4.5 14 9l-4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>

@@ -11,7 +11,7 @@
             
             <div class="relative flex w-full max-w-[1502px] flex-col justify-between overflow-hidden rounded-2xl bg-white/60 text-black backdrop-blur-lg dark:bg-black/50 lg:min-h-[758px] lg:flex-row lg:gap-10 lg:gap-y-0">
                 <!-- Left Panel -->
-                <div class="relative hidden w-full items-center justify-center bg-[linear-gradient(225deg,rgba(239,18,98,1)_0%,rgba(67,97,238,1)_100%)] p-5 lg:inline-flex lg:max-w-[835px] ltr:xl:skew-x-[10deg] rtl:xl:skew-x-[-10deg]">
+                <div class="relative hidden w-full items-center justify-center bg-[linear-gradient(225deg,#16234d_0%,#2c5fe0_100%)] p-5 lg:inline-flex lg:max-w-[835px] ltr:xl:skew-x-[10deg] rtl:xl:skew-x-[-10deg]">
                     <div class="absolute inset-y-0 w-full h-full bg-[url(/assets/images/auth/map.png)] bg-cover bg-center bg-no-repeat opacity-20"></div>
                     <div class="relative z-10 w-full max-w-[580px] text-white ltr:xl:-skew-x-[10deg] rtl:xl:skew-x-[10deg] lg:px-8">
                         <NuxtLink to="/" class="mb-10 block">
@@ -29,7 +29,7 @@
                 <div class="relative flex w-full flex-col items-center justify-center gap-6 px-4 pb-16 pt-6 sm:px-16 lg:max-w-[667px]">
                     <div class="flex w-full max-w-[440px] items-center gap-2 lg:absolute lg:end-6 lg:top-6 lg:max-w-full">
                         <NuxtLink to="/" class="block lg:hidden">
-                            <NexLogo icon-only size="lg" />
+                            <NexLogo size="lg" />
                         </NuxtLink>
                     </div>
                     
@@ -60,7 +60,7 @@
                             </div>
 
                             <div class="pt-4">
-                                <button @click="handleLogin" class="btn btn-gradient w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]" :disabled="isLoading">
+                                <button @click="handleLogin" class="btn btn-gradient w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(44,95,224,0.44)]" :disabled="isLoading">
                                     <span v-if="isLoading" class="flex items-center gap-2">
                                         <icon-loader class="animate-spin w-4 h-4" /> Processing...
                                     </span>
